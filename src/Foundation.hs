@@ -226,13 +226,11 @@ instance YesodAuth App where
                  => Creds App -> m (AuthenticationResult App)
     authenticate Creds{..} = case credsPlugin of
         "PRIZM Yesod Auth Plugin" -> do
-            -- TODO: FIXME: Check if email is verified
-            error "FIXME"
             x <- liftHandler . runDB . getBy $ UniqueUser credsIdent
             return $ case x of
                 Just (Entity uid _) -> Authenticated uid
                 Nothing             -> UserError InvalidLogin
-        -- TODO: FIXME: Better error when plugin name not recognized
+        -- TODO: Better error when plugin name not recognized
         _ -> return $ UserError InvalidLogin
 
     -- You can add other plugins like Google Email, email or OAuth here
@@ -242,6 +240,12 @@ instance YesodAuth App where
     renderAuthMessage _ ("ru":_)   = russianMessage
     renderAuthMessage msg (_:rest) = renderAuthMessage msg rest
     renderAuthMessage _ []         = defaultMessage
+
+    -- authLayout :: Widget -> Handler Html
+    authLayout widget =
+        liftHandler . defaultLayout $ do
+            [whamlet|<script>const NO_REACT = true|]
+            widget
 
     loginHandler :: AuthHandler App Html
     loginHandler = do
