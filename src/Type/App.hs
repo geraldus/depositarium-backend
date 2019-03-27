@@ -59,16 +59,16 @@ data MenuGroupJ
 
 instance ToJSON MenuGroupJ where
     toJSON (SingleItemJ i mt mp)= A.object
-        [ ("type", A.String "single")
-        , ("menuType", toJSON mt)
-        , ("pos", toJSON mp)
-        , ("value", toJSON i) ]
+        [ "type"     .= A.String "single"
+        , "menuType" .= toJSON mt
+        , "pos"      .= toJSON mp
+        , "value"    .= toJSON i ]
     toJSON (ItemGroupJ is mt mp t)= A.object
-        [ ("type", A.String "group")
-        , ("menuType", toJSON mt)
-        , ("pos", toJSON mp)
-        , ("title", A.String t)
-        , ("items", toJSON is) ]
+        [ "type"     .= A.String "group"
+        , "menuType" .= toJSON mt
+        , "pos"      .= toJSON mp
+        , "title"    .= A.String t
+        , "items"    .= toJSON is ]
 
 data MenuItemJ = MenuItemJ
         { menuItemJLabel          :: Text
@@ -76,5 +76,5 @@ data MenuItemJ = MenuItemJ
         }
 instance ToJSON MenuItemJ where
     toJSON (MenuItemJ l r) = A.object
-        [ ("label", A.String l)
-        , ("url", A.String r) ]
+        [ "label" .= A.String l
+        , "url"   .= A.String r ]
