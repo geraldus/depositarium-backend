@@ -1,9 +1,6 @@
 <div ##{idApp}>
-
-
 <div ##{idApp} .no-js-fallback>
     ^{widget}
-
 <script>
     const f = document.querySelector('##{idApp}.no-js-fallback')
-    f.remove()
+    if (typeof NO_REACT != typeof undefined && !NO_REACT) f.remove()
