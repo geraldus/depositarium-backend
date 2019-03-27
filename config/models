@@ -14,6 +14,15 @@ Email json
     UniqueEmail email
     deriving Show Typeable
 
+UserMeta json
+    user        UserId
+    firstName   Text
+    patronymic  Text
+    lastName    Text
+    UniqueUserMeta user
+    deriving Show Typeable
+
+
 AccessRightDesc json
     object    AccessType
     language  Text
