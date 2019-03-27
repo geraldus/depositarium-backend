@@ -1,0 +1,203 @@
+-- By default this file is used by `persistFileWith` in Model.hs (which is imported by Foundation.hs)
+-- Syntax for this file here: https://github.com/yesodweb/persistent/blob/master/docs/Persistent-entity-syntax.md
+
+User json
+    ident     Text
+    password  Text
+    UniqueUser ident
+    deriving Show Typeable
+
+Email json
+    email   Text
+    user    UserId
+    verkey  Text Maybe
+    UniqueEmail email
+    deriving Show Typeable
+
+AccessRightDesc json
+    object    AccessType
+    language  Text
+    htmlName  Text
+    htmlDesc  Text
+    UniqueAccessRightDesc object language
+    deriving Show Typeable
+
+UserRights json
+    user    UserId
+    access  AccessType
+    UniqueUserRight user access
+    deriving Show Typeable
+
+Role json
+    title  Text
+    deriving Show Typeable
+
+-- | Have is a set of acccess rights
+RolesRights json
+    role    RoleId
+    access  AccessType
+    UniqueRoleRights  role access
+    deriving Show Typeable
+
+-- | User might have multiple roles
+-- UserRoles json
+--     user  UserId
+--     role  RoleId
+--     UniqueUserRoles user role
+--     deriving Show Typeable
+
+RoleDesc json
+    role      RoleId
+    language  Text
+    htmlName  Text
+    htmlDesc  Text
+    UniqueRoleDesc role language
+    deriving Show Typeable
+
+Currency json
+    name   Text
+    abbr   Text
+    code   Text
+    sign   Text
+    type   CurrencyType
+    UniqueCurrency name abbr code sign type
+    deriving Show Typeable
+
+CurrencyDesc json
+    currency      CurrencyId
+    language      Text
+    htmlName      Text
+    htmlDesc      Text
+    htmkLongName  Text
+    UniqueCurrencyDesc currency language
+    deriving Show Typeable
+
+Wallet json
+    user      UserId
+    currency  CurrencyId
+    amount    Int default 0
+    token     Text
+    UniqueWallet user currency
+    deriving Show Typeable
+
+Transaction json
+    user    UserId
+    wallet  WalletId
+    type    TransactionType
+    time    UTCTime
+    diff    Int  -- ^ negative values when balance decreases; positive otherwise
+    deriving Show Typeable
+
+TransactionDesc json
+    type      TransactionType
+    language  Text
+    htmlName  Text
+    htmlDesc  Text
+    UniqueTransactionTypeDesc type language
+    deriving Show Typeable
+
+Deposit json
+    wallet    WalletId
+    transfer  TransferMethodId
+    program   ProgramId
+    amount    Int
+    token     Text
+    UniqueDepositToken token
+    deriving Show Typeable
+
+DepositStatus json
+    request  DepositId
+    status   DepositStatusType
+    time     UTCTime
+    staffId  UserId Maybe
+    deriving Show Typeable
+
+DepositStatusDesc json
+    status    DepositStatusType
+    language  Text
+    htmlName  Text
+    htmlDesc  Text
+    UniqueDepositStatusDesc status language
+    deriving Show Typeable
+
+DepositTransaction json
+    deposit      DepositId
+    status       DepositStatusId
+    transaction  TransactionId
+    UniqueDepositTransaction deposit status transaction
+    deriving Show Typeable
+
+Withdrawal json
+    wallet     WalletId
+    method     TransferMethodId
+    program    ProgramId
+    addressee  [Text]
+    amount     Int
+    frozen     Int
+    fee        Int
+    deriving Show Typeable
+
+WithdrawalStatus json
+    request  WithdrawalId
+    status   WithdrawalStatusType
+    time     UTCTime
+    staffId  UserId Maybe
+    deriving Show Typeable
+
+WithdrawalStatusDesc json
+    status WithdrawalStatus
+    language  Text
+    htmlName  Text
+    htmlDesc  Text
+    UniqueWithdrawalStatusDesc status language
+    deriving Show Typeable
+
+WithdrawalTransaction json
+    withdrawal WithdrawalId
+    status WithdrawalStatusId
+    transaction TransactionId
+    UniqueWithdrawalTransaction withdrawal status transaction
+    deriving Show Typeable
+
+TransferMethod json
+    name Text
+    deriving Show Typeable
+
+TransferMethodDesc json
+    method    TransferMethodId
+    language  Text
+    htmlName  Text
+    htmlDesc  Text
+    UniqueTransferMethodDesc method language
+    deriving Show Typeable
+
+Program json
+    name Text
+    params ProgParamsId
+    UniqueProgram name params
+    deriving Show Typeable
+
+ProgramDesc json
+    program   ProgramId
+    language  Text
+    htmlName  Text
+    htmlDesc  Text
+    UniqueProgramDesc program language
+    deriving Show Typeable
+
+ProgParams json
+    deriving Show Typeable
+
+Summary json
+    currency  CurrencyId
+    amount    Int
+    type      SummaryType
+    deriving Show Typeable
+
+SummaryDesc json
+    type      SummaryType
+    language  Text
+    htmlName  Text
+    htmlDesc  Text
+    UniqueSummaryDesc type language
+    deriving Show Typeable

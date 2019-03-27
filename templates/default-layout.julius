@@ -1,0 +1,18 @@
+
+var _date = new Date()
+document.cookie = "timezoneOffset=" + _date.getTimezoneOffset()
+
+const appRoot = document.querySelector(#{"#" <> idApp})
+ReactDOM.render(
+    React.createElement( _ui.app, {
+        nav: {
+            items: {
+                collapsible: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) collapsibleMenues))))},
+                sticky: {
+                    right: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) rightStickyMenues))))}
+                }
+            }
+        }
+    }, null),
+    appRoot
+)
