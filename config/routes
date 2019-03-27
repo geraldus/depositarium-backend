@@ -8,3 +8,6 @@
 /robots.txt   RobotsR GET
 
 / HomeR GET
+
+
+/manage/users/ ManageListUsersR GET

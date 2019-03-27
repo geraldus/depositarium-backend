@@ -51,6 +51,7 @@ import           System.Log.FastLogger                ( defaultBufSize,
 -- Don't forget to add new modules to your cabal file!
 import           Handler.Common
 import           Handler.Home
+import           Handler.Manage.User.List
 
 import qualified Crypto.Nonce                         as Nonce
 import           Data.Text.Encoding                   ( decodeUtf8With )
@@ -137,6 +138,7 @@ checkCreateRoot = runSqlPool $ do
         u <- insert $ User "root" salted
         mapM (insert . UserRights u) [minBound .. maxBound]
         return ()
+
 
 -- | Salt a password with a randomly generated salt.
 saltPass :: Text -> IO Text
