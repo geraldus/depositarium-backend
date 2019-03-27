@@ -30,19 +30,16 @@ import           Data.Text                     ( Text )
 import qualified Data.Text.Encoding            as TE
 import qualified Yesod.Auth.Util.PasswordStore as PS
 
--- TODO: FIXME: проверять статус активации при входе
-
 
 loginR :: AuthRoute
-loginR = PluginR "local auth plugin" ["login"]
-
+loginR = PluginR "PRIZM Yesod Auth Plugin" ["login"]
 
 class ( YesodAuth site
       , YesodPersist site
       , BaseBackend (YesodPersistBackend site) ~ SqlBackend
+      , PersistQueryRead (YesodPersistBackend site)
       , PersistUniqueRead (YesodPersistBackend site) )
       => PrizmAuthPlugin site
-
 
 authPrizm :: PrizmAuthPlugin m => AuthPlugin m
 authPrizm =
@@ -94,8 +91,16 @@ checkCreds username password = liftHandler . runDB $ do
     mayEmail <- getBy $ UniqueEmail username
     case mayEmail of
         Nothing   -> do
-            error "check root"
-            pure NoSuchUser
+            userCount <- count ([] :: [Filter User])
+            root <- selectFirst [ UserIdent ==. username ] [ ]
+            if userCount > 1
+                then pure NoSuchUser
+                else pure $ case root of
+                    Nothing -> NoSuchUser
+                    Just user -> if isValidPass
+                            password (userPassword . entityVal $ user)
+                        then AuthSuccess
+                        else InvalidAuthPair
         Just email -> do
             mayUser <- get . emailUser . entityVal $ email
             case mayUser of
