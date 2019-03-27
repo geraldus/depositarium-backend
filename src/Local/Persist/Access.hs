@@ -8,8 +8,13 @@ import           Data.Aeson
 
 
 data AccessType
-    = SelfBalanceView
-    deriving (Generic, Show, Read, Eq)
+    = ListUsers
+    | CreateUser
+    | ViewUser
+    | UpdateUser
+    | DeleteUser
+    | SelfBalanceView
+    deriving (Generic, Show, Read, Eq, Enum, Bounded)
 derivePersistField "AccessType"
 
 instance ToJSON AccessType where
