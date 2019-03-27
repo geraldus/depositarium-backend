@@ -15,6 +15,10 @@ AccessDenied: Доступ запрещён
 HomePageTitle: Главная страница
 SignInPageTitle: Вход
 SignUpPageTitle: Регистрация
+ListUsersPageTitle: Пользователи
+CreateUserPageTitle: Создание пользователя
+UpdateUserPageTitle: Редактирование пользователя
+DeleteUserPageTitle: Удаление пользователя
 
 
 # MISC COMMON PHRASES
