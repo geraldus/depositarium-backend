@@ -29,6 +29,7 @@ import           Text.Hamlet             ( hamletFile )
 import           Text.Jasmine            ( minifym )
 
 import           Local.Auth
+import           Local.Persist.Access
 import           Type.App
 import           Utils.Common
 import           Utils.Nav               ( partCollapsibleMenues )
@@ -362,24 +363,39 @@ appMenuItems
     -> Maybe (Route App)
     -> Handler [ MenuGroup App ]
 appMenuItems user _ = do
-    r <- getMessageRender
+    msg <- getMessageRender
+    rights <- case user of
+        Nothing     -> pure [ ]
+        Just (u, _) ->
+            map entityVal
+            <$> runDB (selectList [ UserRightsUser ==. u ] [ ])
+    $logInfo $ pack $ show $ rights
     return $
-        [ SingleItem (itemHome r) cl pl
+        [ SingleItem (itemHome msg) cl pl
         ]
-        <> userItems r user
+        <> userItems msg user (plainAccess rights)
   where
-    userItems r Nothing  = guestItems r
-    userItems _ (Just _) = [ ]
+    userItems msg Nothing _ = guestItems msg
+    userItems msg (Just _) access =
+        let mug = manageUserGroup msg access
+            items = mug <> [ ]
+        in [ ItemGroup items st pr (msg MsgListUsersPageTitle) ]
     guestItems r  = [ SingleItem (itemSignIn r) st pr ]
-    itemHome r = MenuItem (r MsgHomePageTitle) HomeR
-    itemSignIn r = MenuItem (r MsgSignInPageTitle) (AuthR LoginR)
+    itemHome msg = MenuItem (msg MsgHomePageTitle) HomeR
+    itemSignIn msg = MenuItem (msg MsgSignInPageTitle) (AuthR LoginR)
+    itemListUsers msg = MenuItem (msg MsgListUsersPageTitle) ManageListUsersR
+    plainAccess = map userRightsAccess
     cl = MTCollapsible
     st = MTSticky
     pl = MPLeft
     pc = MPCenter
     pr = MPRight
-    allways = True
--- | React
+    manageUserGroup msg access =
+        let listUsers = [itemListUsers msg | ListUsers `elem` access]
+        in listUsers <> [ ]
+
+
+-- ** React
 
 addReactScripts :: Widget
 addReactScripts = do
