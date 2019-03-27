@@ -20,6 +20,9 @@ const plugins = [
                 'Children',
                 'createElement',
                 'createFactory'
+            ],
+            'node_modules/react-is/index.js': [
+                'isValidElementType',
             ]
         }
     }), // converts date-fns to ES modules

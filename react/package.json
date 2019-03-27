@@ -2,13 +2,10 @@
   "name": "mao-react",
   "version": "0.0.1",
   "description": "Client side React Components for MAO website",
-  "main": "main.js",
+  "main": "index.js",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "babel": "^6.23.0",
-    "moment": "^2.24.0",
-    "react-autocomplete": "^1.8.1",
-    "recompose": "^0.30.0"
+    "babel": "^6.23.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -18,9 +15,11 @@
     "babel-plugin-lodash": "^3.3.4",
     "babel-preset-react": "^6.24.1",
     "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "react": "^16.8.4",
-    "react-dom": "^16.8.4",
+    "react-autocomplete": "^1.8.1",
     "react-router-dom": "^5.0.0",
+    "recompose": "^0.30.0",
     "rollup": "^1.4.1",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.1",
