@@ -11,7 +11,14 @@ ReactDOM.render(
                 sticky: {
                     right: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) rightStickyMenues))))}
                 }
-            }
+            },
+            routes: [
+                {
+                    path: '@{HomeR}',
+                    exact: true,
+                    component: _ui.homePage
+                }
+            ]
         }
     }, null),
     appRoot
