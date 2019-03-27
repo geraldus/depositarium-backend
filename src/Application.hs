@@ -134,7 +134,8 @@ checkCreateRoot = runSqlPool $ do
     userCount <- count ([] :: [Filter User])
     when (userCount == 0) $ do
         salted <- liftIO $ saltPass "root"
-        insert $ User "root" salted
+        u <- insert $ User "root" salted
+        mapM (insert . UserRights u) [minBound .. maxBound]
         return ()
 
 -- | Salt a password with a randomly generated salt.
