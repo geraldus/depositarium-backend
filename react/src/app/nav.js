@@ -6,29 +6,21 @@ import NavBar from './nav-bar'
 
 const AppNav = (props) => {
     const { items, menuId } = props
-    const l = props.labels
     const hasStyle = typeof props.style != typeof undefined
     return (
-        <nav className={props.navClassNames}>
-            {items.collapsible.length > 0 && <React.Fragment>
-                <button
-                    className="navbar-toggler"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target={`#${menuId}`}
-                    aria-controls={menuId}
-                    aria-expanded="false"
-                    aria-label={l.ariaExpandMenu}
-                    style={hasStyle? props.style : undefined}>
-                    <span className="navbar-toggler-icon"/>
-                </button>
+        <nav className={props.navClassNames} style={hasStyle? props.style : undefined}>
+            {items.collapsible.length > 0 &&
                 <CollapseNav
                     items={items.collapsible}
                     menuId={menuId}
+                    renderItem={props.renderItem}
+                    labels={props.labels}
                 />
-            </React.Fragment>}
+            }
             {typeof items.sticky.right != typeof undefined &&
-                <NavBar items={items.sticky.right}/>}
+                <NavBar
+                    items={items.sticky.right}
+                    renderItem={props.renderItem}/>}
         </nav>
     )
 }
@@ -55,7 +47,8 @@ const withDeafaultProps = defaultProps({
         sticky: {
             right: []
         }
-    }
+    },
+    renderItem: props => <NavItem { ...props }/>
 })
 
 export default withDeafaultProps(AppNav)
