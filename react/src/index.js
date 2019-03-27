@@ -1,6 +1,5 @@
 import App from './app.js'
-import AppNav from './app/nav'
-
+import HomePage from './pages/home'
 
 export const app = App
-export const appNav = AppNav
+export const homePage = HomePage
