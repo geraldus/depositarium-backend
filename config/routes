@@ -11,3 +11,4 @@
 
 
 /manage/users/ ManageListUserR GET
+/manage/users/create ManageCreateUserR GET POST
