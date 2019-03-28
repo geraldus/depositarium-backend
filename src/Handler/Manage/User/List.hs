@@ -1,17 +1,27 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Handler.Manage.User.List where
 
-import           Import             hiding ( on, (==.) )
+import           Import             hiding ( on, (!=.), (==.) )
 
+import           Data.Aeson         as A
 import           Database.Esqueleto
 
 
-getManageListUsersR :: Handler TypedContent
-getManageListUsersR = do
+getManageListUserR :: Handler TypedContent
+getManageListUserR = do
     list <- runDB . select . from $
-        \(e `LeftOuterJoin` u `LeftOuterJoin` m) -> do
-            on (m ^. UserMetaUser ==. u ^. UserId)
-            on (e ^. EmailUser ==. u ^. UserId)
+        \(u `LeftOuterJoin` e `LeftOuterJoin` m) -> do
+            on (just (u ^. UserId) ==. m ?. UserMetaUser)
+            on (just (u ^. UserId) ==. e ?. EmailUser)
+            where_ (u ^. UserIdent !=. val "")
             return (u, e, m)
-    selectRep . provideRep . return $ object
-        [ "users" .= map toJSON list ]
+    selectRep $ do
+        provideRep . defaultLayout $ [whamlet|user-list|]
+        provideRep . return $ object
+            [ "users" .= map (toJSON . clean) list ]
+    where
+        clean (u, _, _) = cleanUpUser u
+        cleanUpUser :: Entity User -> A.Value
+        cleanUpUser (Entity idx v) = object
+            [ "id" .= toJSON idx
+            , "ident" .= toJSON (userIdent v) ]
