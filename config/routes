@@ -10,4 +10,4 @@
 / HomeR GET
 
 
-/manage/users/ ManageListUsersR GET
+/manage/users/ ManageListUserR GET
