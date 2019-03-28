@@ -117,8 +117,7 @@ instance Yesod App where
         routeRender <- getUrlRender
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
         idApp <- newIdent
-        (title, parents) <- breadcrumbs
-        -- Define the menu items of the header.
+        (_title, _parents) <- breadcrumbs
         pc <- widgetToPageContent $ do
             addReactScripts
             addReactBundle
