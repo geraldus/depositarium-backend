@@ -397,7 +397,7 @@ appMenuItems user _ = do
     userItems msg (Just _) access =
         let mug = manageUserGroup msg access
             items = mug <> [ ]
-        in [ ItemGroup items st pr (msg MsgListUsersPageTitle) ]
+        in [ ItemGroup items st pr (msg MsgManageUserMenuTitle) ]
     guestItems r  = [ SingleItem (itemSignIn r) st pr ]
     itemHome msg = MenuItem (msg MsgHomePageTitle) HomeR
     itemSignIn msg = MenuItem (msg MsgSignInPageTitle) (AuthR LoginR)
