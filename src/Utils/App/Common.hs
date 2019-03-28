@@ -4,8 +4,6 @@ module Utils.App.Common where
 
 import           Import
 
-import           Utils.Time
-
 import           Data.Time.Format ( TimeLocale (..) )
 
 

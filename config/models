@@ -22,7 +22,6 @@ UserMeta json
     UniqueUserMeta user
     deriving Show Typeable
 
-
 AccessRightDesc json
     object    AccessType
     language  Text
