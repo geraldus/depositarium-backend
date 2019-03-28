@@ -49,6 +49,7 @@ import           System.Log.FastLogger                ( defaultBufSize,
 -- Don't forget to add new modules to your cabal file!
 import           Handler.Common
 import           Handler.Home
+import           Handler.Manage.User.Create
 import           Handler.Manage.User.List
 
 import           Utils.Database.Password              ( saltPass )

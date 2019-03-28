@@ -139,6 +139,7 @@ instance Yesod App where
     isAuthorized (AuthR _) _         = return Authorized
     isAuthorized HomeR _             = return Authorized
     isAuthorized ManageListUserR _   = authorizeByAccess [ ListUsers ]
+    isAuthorized ManageCreateUserR _ = authorizeByAccess [ CreateUser ]
     isAuthorized FaviconR _          = return Authorized
     isAuthorized RobotsR _           = return Authorized
     isAuthorized (StaticR _) _       = return Authorized
@@ -402,6 +403,7 @@ appMenuItems user _ = do
     itemHome msg = MenuItem (msg MsgHomePageTitle) HomeR
     itemSignIn msg = MenuItem (msg MsgSignInPageTitle) (AuthR LoginR)
     itemListUsers msg = MenuItem (msg MsgListUserPageTitle) ManageListUserR
+    itemCreateUser msg = MenuItem (msg MsgCreateUserPageTitle) ManageCreateUserR
     plainAccess = map userRightsAccess
     cl = MTCollapsible
     st = MTSticky
@@ -410,7 +412,8 @@ appMenuItems user _ = do
     pr = MPRight
     manageUserGroup msg access =
         let listUsers = [itemListUsers msg | ListUsers `elem` access]
-        in listUsers <> [ ]
+            createUser = [itemCreateUser msg | CreateUser `elem` access]
+        in listUsers <> createUser <> [ ]
 
 
 -- ** React
