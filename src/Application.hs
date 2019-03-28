@@ -53,10 +53,9 @@ import           Handler.Common
 import           Handler.Home
 import           Handler.Manage.User.List
 
+import           Utils.Database.Password              ( saltPass )
+
 import qualified Crypto.Nonce                         as Nonce
-import           Data.Text.Encoding                   ( decodeUtf8With )
-import           Data.Text.Encoding.Error             ( lenientDecode )
-import qualified Yesod.Auth.Util.PasswordStore        as PS
 
 
 -- This line actually creates our YesodDispatch instance. It is the second half
@@ -138,15 +137,6 @@ checkCreateRoot = runSqlPool $ do
         u <- insert $ User "root" salted
         mapM (insert . UserRights u) [minBound .. maxBound]
         return ()
-
-
--- | Salt a password with a randomly generated salt.
-saltPass :: Text -> IO Text
-saltPass = fmap (decodeUtf8With lenientDecode)
-         . flip PS.makePassword 16
-         . encodeUtf8
-
-
 
 -- | Warp settings for the given foundation value.
 warpSettings :: App -> Settings
