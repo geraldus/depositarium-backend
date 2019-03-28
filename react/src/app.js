@@ -4,27 +4,35 @@ import AppNav from './app/nav'
 
 
 export default class App extends React.Component {
-    renderRoute () {
+    currentKnownRoute () {
         const l = window.location
+        const { href, pathname } = l
         const { nav } = this.props
-        const c = nav.routes.find((e) => {
-            return e.path === l.pathname
-        })
-        console.log(l)
-        console.log(nav.routes)
-        console.log(c)
-        if (typeof c !== typeof undefined) {
-            return (props) => <c { ... props }/>
+        const route = nav.routes.find((e) => e.path === href)
+        if (typeof route !== typeof undefined) {
+            let r = {  ... route, path: pathname }
+            return r
+        } else {
+            return null
+        }
+    }
+    currentRouteComponent () {
+        const route = this.currentKnownRoute ()
+        if (route !== null) {
+            console.log(route)
+            return (props) => <route.component { ... route.props }/>
         } else {
             return () => null
         }
     }
 
     render () {
-        const SelectedRoute = this.renderRoute()
+        const SelectedComponent = this.currentRouteComponent()
         return (<React.Fragment>
             <AppNav { ... this.props.nav }/>
-            <SelectedRoute/>
+            <div className="container-fluid">
+                <SelectedComponent/>
+            </div>
         </React.Fragment>)
     }
 
