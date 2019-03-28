@@ -16,7 +16,32 @@ ReactDOM.render(
                 {
                     path: '@{HomeR}',
                     exact: true,
+                    props: {
+                        labels: {
+                            title: "#{rawJS (msg MsgHomePageTitle)}"
+                        }
+                    },
                     component: _ui.homePage
+                },
+                {
+                    path: '@{ManageListUserR}',
+                    exact: true,
+                    component: _ui.manageListUser,
+                    props: {
+                        labels: {
+                            title: "#{rawJS (msg MsgListUserPageTitle)}"
+                        },
+                        apiUrl: '@?{(ManageListUserR, [("_accept", "application/json")])}'
+                    },
+                },
+                {
+                    path: '@{ManageCreateUserR}',
+                    exact: true,
+                    component: _ui.manageCreateUser,
+                    props: {
+                        apiUrl: '@?{(ManageCreateUserR, [("_accept", "application/json")])}',
+                        accessRights: #{rawJS accessRightsJSON}
+                    },
                 }
             ]
         }

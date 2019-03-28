@@ -118,6 +118,7 @@ instance Yesod App where
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
         idApp <- newIdent
         (_title, _parents) <- breadcrumbs
+        msg <- getMessageRender
         pc <- widgetToPageContent $ do
             addReactScripts
             addReactBundle
