@@ -12,7 +12,7 @@ export class FormCheck extends React.Component {
     }
     updateValue (e) {
         console.log(e)
-        this.setState(s => _.metge({}, s, { value: e.value }))
+        this.setState(s => _.merge({}, s, { value: e.value }))
         this.props.onChange(e)
     }
     render () {
