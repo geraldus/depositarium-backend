@@ -1,6 +1,13 @@
 <div ##{idApp}>
-<div ##{idApp} .no-js-fallback>
+<div ##{idApp}-fallback>
     ^{widget}
 <script>
-    const f = document.querySelector('##{idApp}.no-js-fallback')
-    if (typeof NO_REACT != typeof undefined && !NO_REACT) f.remove()
+    const f = document.querySelector('##{idApp}-fallback')
+    if (typeof NO_REACT != typeof undefined && NO_REACT === true) {
+        console.log(typeof NO_REACT != typeof undefined)
+        console.warn('ReactJS DISABLED. Falling back')
+    } else {
+        console.log('ReactJS enabled.  Removing fallback')
+        f.remove()
+
+    }
