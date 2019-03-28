@@ -7,6 +7,7 @@ TermsOfUseTitle: Правила пользования сервисом
 WrongRequest: Неверный запрос
 PleaseLogInText: Пожалуйста, войдите в систему для просмотра этой страницы
 AccessDenied: Доступ запрещён
+FormFailureErrorText: Форма содержит ошибки
 
 # PAGE TITLES
 
@@ -15,10 +16,20 @@ AccessDenied: Доступ запрещён
 HomePageTitle: Главная страница
 SignInPageTitle: Вход
 SignUpPageTitle: Регистрация
-ListUsersPageTitle: Пользователи
+
+## MANAGE
+
+ListUserPageTitle: Пользователи
 CreateUserPageTitle: Создание пользователя
 UpdateUserPageTitle: Редактирование пользователя
 DeleteUserPageTitle: Удаление пользователя
+
+
+# MENU TITLES
+
+## MANAGE
+ManageUserMenuTitle: Управление пользователями
+
 
 
 # MISC COMMON PHRASES
