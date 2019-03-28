@@ -36,6 +36,7 @@ import           Utils.Nav               ( partCollapsibleMenues )
 
 import qualified Crypto.Nonce            as Nonce
 import           Data.Aeson              ( encode )
+import           Data.List               ( isSubsequenceOf )
 import           Text.Julius             ( RawJS (..) )
 
 -- data AppChannels = AppChannels
@@ -177,6 +178,23 @@ instance Yesod App where
     makeLogger :: App -> IO Logger
     makeLogger = return . appLogger
 
+
+-- | Authorizes only users having ALL specified access rights
+authorizeByAccess :: [ AccessType ] -> Handler AuthResult
+authorizeByAccess ats = do
+    user <- maybeAuth
+    case user of
+        Nothing -> unauthorizedI MsgPleaseLogInText
+        Just (Entity ident _) -> do
+            _rights <- map (userRightsAccess . entityVal) <$> getUserRights ident
+            if isSubsequenceOf (sort ats) (sort rights)
+                then pure Authorized
+                else unauthorizedI MsgAccessDenied
+    where
+            getUserRights user = runDB $
+                selectList [ UserRightsUser ==. user ] []
+
+
 -- Define breadcrumbs.
 instance YesodBreadcrumbs App where
     -- Takes the route that the user is currently on, and returns a tuple
@@ -212,7 +230,6 @@ instance PrizmAuthPlugin App
 
 instance YesodAuth App where
     type AuthId App = UserId
-
     -- Where to send a user after successful login
     loginDest :: App -> Route App
     loginDest _ = HomeR
@@ -222,7 +239,7 @@ instance YesodAuth App where
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer :: App -> Bool
     redirectToReferer _ = False
-
+    --
     authenticate :: (MonadHandler m, HandlerSite m ~ App)
                  => Creds App -> m (AuthenticationResult App)
     authenticate Creds{..} = case credsPlugin of
