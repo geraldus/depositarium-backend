@@ -6,6 +6,7 @@ import           Import
 
 import           Local.Persist.Access
 import           Type.UserData
+import           Utils.Common
 import           Utils.Database.Password ( saltPass )
 
 import           Data.Aeson              as A
@@ -30,18 +31,18 @@ postManageCreateUserR = do
             ud <- createUser fd
             return $ object [ "type" .= A.String "success" ]
 
-        dataMissingResponse msg = errorResponse (msg MsgWrongRequest)
+        dataMissingResponse msg = errorResponseJ (msg MsgWrongRequest)
 
         formErrorsResponse msg errors = errorResponseWithData
             (msg MsgFormFailureErrorText)
             [ "form-errors" .= map toJSON errors ]
 
         errorResponseWithData errorText =
-            merge . (:) (errorResponse errorText) . (:[]) . object
+            jsonMerge . (:) (errorResponseJ errorText) . (:[]) . object
 
-        errorResponse errorText = object
-            [ "type" .= A.String "error"
-            , "message" .= toJSON errorText ]
+
+accessRightsList :: [ (Text, AccessType) ]
+accessRightsList = map (\r -> (txt r, r)) [minBound .. maxBound]
 
 createUser :: UserData -> Handler (Entity User, Entity Email, Entity UserMeta, [ UserRightsId ])
 createUser UserData{..} = do
@@ -71,36 +72,31 @@ createUser UserData{..} = do
 
 
 
-userForm :: Form UserData
-userForm _extra = do
-    (name, _) <- mreq textField "name" Nothing
-    (patronymic, _) <- mreq textField "patronymic" Nothing
-    (lastname, _) <- mreq textField "lastname" Nothing
-    (ident, _) <- mreq textField "ident" Nothing
-    (email, _) <- mreq textField "email" Nothing
-    (password, _) <- mreq textField "password" Nothing
-    (accessRights, _) <- mreq
-            (checkboxesField (pure accessRightsOpts))
-            "rights"
-            Nothing
-    let res = UserData
-            <$> name
-            <*> patronymic
-            <*> lastname
-            <*> ident
-            <*> email
-            <*> password
-            <*> accessRights
-    return (res, [whamlet||])
-    where
-        accessRightsOpts = mkOptionList accessRightsList
+-- userForm :: Form UserData
+-- userForm _extra = do
+--     (name, _) <- mreq textField "name" Nothing
+--     (patronymic, _) <- mreq textField "patronymic" Nothing
+--     (lastname, _) <- mreq textField "lastname" Nothing
+--     (ident, _) <- mreq textField "ident" Nothing
+--     (email, _) <- mreq textField "email" Nothing
+--     (password, _) <- mreq textField "password" Nothing
+--     (accessRights, _) <- mreq
+--             (checkboxesField (pure accessRightsOpts))
+--             "rights"
+--             Nothing
+--     let res = UserData
+--             <$> name
+--             <*> patronymic
+--             <*> lastname
+--             <*> ident
+--             <*> email
+--             <*> password
+--             <*> accessRights
+--     return (res, [whamlet||])
+--     where
+--         accessRightsOpts = mkOptionList accessRightsOL
 
-        accessRightsList :: [ Option AccessType ]
-        accessRightsList = map
-            (\r -> Option (txt r) r (txt r))
-            [minBound .. maxBound]
-
-        txt = pack . show
-
-merge :: [Value] -> Value
-merge = Object . HML.unions . map (\(Object x) -> x)
+--         accessRightsOL :: [ Option AccessType ]
+--         accessRightsOL = map
+--             (\r -> Option (txt r) r (txt r))
+--             [minBound .. maxBound]
