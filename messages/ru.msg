@@ -42,9 +42,6 @@ ProfileViewMenuTitle: Мой кабинет
 
 
 # MISC COMMON PHRASES
-Save: Сохранить
-Cancel: Отмена
-ChangesSaved: Изменения сохранены
 
 SignOut: Выход
 
@@ -53,8 +50,6 @@ EmailAddress: Адрес эл.почты
 Password: Пароль
 PasswordConfirmation: Подтверждение пароля
 WalletAddress: Адрес кошелька
-Alias: Ссылка
-Title: Заголовок
 Card: Карта
 Phone: Телефон
 Skype: Skype
@@ -62,23 +57,35 @@ WebSite: Веб.сайт
 VkCom: ВКонтакте
 Telegram: Telegram
 Balance: Баланс
+
+Save: Сохранить
+Cancel: Отмена
+ChangesSaved: Изменения сохранены
+
+Withdraw: Вывод
+Deposit: Пополнение
+
+Alias: Ссылка
+Title: Заголовок
+
 Event: Событие
 Execute: Исполнить
 Executed: Исполнено
-Fee: Комиссия
-Received: Получено
-Remainder: Остаток
-Withdraw: Вывод
-Deposit: Пополнение
-Amount: Сумма
-QuantityShort: Кол-во
+
 All: Все
 Add: Добавить
 Manage: Управление
+
 Date: Дата
 DateCreated: Дата создания
-Details: Подробности
+
+Fee: Комиссия
+Received: Получено
+Remainder: Остаток
+Amount: Сумма
+QuantityShort: Кол-во
 Ratio: Курс
+Details: Подробности
 
 EmailConfirmedText: Проверка почты успешно пройдена!
 EmailAlreadyConfirmedText: Проверка уже пройдена
