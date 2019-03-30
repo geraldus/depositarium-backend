@@ -10,6 +10,7 @@ import           Utils.Time
 import           Data.Aeson          ( encode )
 import qualified Data.HashMap.Lazy   as HML
 import           Data.Time.Format    ( TimeLocale (..) )
+import           Text.Julius         ( RawJS (..), RawJavascript )
 
 
 {- YESOD.  APP -}
@@ -28,6 +29,12 @@ txt = pack . show
 
 
 -- *** JSON
+
+-- encodeMap :: (Functor f, ToJSON a) => f a -> [a] -> a
+rawEncodeMap
+    :: (ToJSON (f b), Functor f)
+    => (a -> b) -> f a -> RawJavascript
+rawEncodeMap f = rawJS . encodeStrictText . map f
 
 encodeStrictText :: ToJSON a => a -> Text
 encodeStrictText = decodeUtf8 . toStrict . encode
