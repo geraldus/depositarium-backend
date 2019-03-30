@@ -7,27 +7,35 @@ export class FormCheck extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            value: ''
+            value: this.props.value,
+            checked: this.props.checked
         }
     }
     updateValue (e) {
-        console.log(e)
-        this.setState(s => _.merge({}, s, { value: e.value }))
-        this.props.onChange(e)
+        const val = e.target.value
+        this.setState(s => {
+            this.props.onChange(val, !s.checked)
+            return (_.merge({}, s, { value: val, checked: !s.checked }))
+        })
     }
     render () {
         const { id, label, name, type } = this.props
+        let id_ = []
+        if (id != '') id_.push(id)
+        if (name != '') id_.push(name)
+        id_ = id.length > 0? id_.join('-') : undefined
         return (
             <div className="form-check">
                 <input
-                    id={name? `${id}-${name}` : undefined}
+                    id={id_}
                     className="form-check-input"
                     type={type}
                     name={name? name : undefined}
                     value={this.state.value}
+                    defaultChecked={this.props.checked}
                     onChange={e => this.updateValue(e)} />
                 {label && <label
-                    htmlFor={`${id}-name`}
+                    htmlFor={`${id_}`}
                     className="form-check-label">{label}</label>}
             </div>
         )
@@ -36,6 +44,7 @@ export class FormCheck extends React.Component {
 
 const withDefaultProps = defaultProps({
     id: _.uniqueId(),
+    checked: false,
     name: ''
 })
 

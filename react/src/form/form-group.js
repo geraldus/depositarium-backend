@@ -7,21 +7,25 @@ export class FormGroup extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            value: ''
+            value: this.props.value
         }
     }
     updateValue (e) {
-        console.log(e)
-        this.setState(s => _.merge({}, s, { value: e.value }))
-        this.props.onChange(e)
+        const val = e.target.value
+        this.setState(s => _.merge({}, s, { value: val }))
+        this.props.onChange(val)
     }
     render () {
         const { id, label, name, type } = this.props
+        let id_ = []
+        if (id != '') id_.push(id)
+        if (name != '') id_.push(name)
+        id_ = id.length > 0? id_.join('-') : undefined
         return (
-            <div id={id} className="form-group">
-                {label && <label htmlFor={`${id}-name`}>{label}</label>}
+            <div id={id_} className="form-group">
+                {label && <label htmlFor={id_}>{label}</label>}
                 <input
-                    id={name? `${id}-${name}` : undefined}
+                    id={id_}
                     className="form-control"
                     type={type}
                     name={name? name : undefined}
