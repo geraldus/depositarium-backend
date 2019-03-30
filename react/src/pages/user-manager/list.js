@@ -19,15 +19,16 @@ export class ListUser extends React.Component {
         fetch(this.props.apiUrl)
             .then(res => res.json())
             .then(j => {
-                let users = j.users
+                let users = j.users.map(u => ({
+                    ...u,
+                    updateUrl: `${this.props.updateUrl.replace(':id', u.id)}`
+                }))
                 console.log(j, users)
                 self.setState(s => _.merge({}, s, { list: users }))
             })
     }
     componentDidMount () {
-        let list = []
         this.fetchList()
-        this.state.list = list
     }
     render () {
         const L = this.props.labels
@@ -41,7 +42,8 @@ export class ListUser extends React.Component {
 const withDeafaultProps = defaultProps({
     labels: {
         title: 'Пользователи'
-    }
+    },
+    updateUrl: '/manage/users/update/:id'
 })
 
 export default withDeafaultProps(ListUser)
