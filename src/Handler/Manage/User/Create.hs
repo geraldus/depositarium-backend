@@ -5,6 +5,7 @@ module Handler.Manage.User.Create where
 import           Import
 
 import           Local.Persist.Access
+import           Type.UserData
 import           Utils.Database.Password ( saltPass )
 
 import           Data.Aeson              as A
@@ -69,14 +70,6 @@ createUser UserData{..} = do
         mkUserRights = UserRights
 
 
-data UserData = UserData
-    { userDataFirstName  :: Text
-    , userDataPatronymic :: Text
-    , userDataLastName   :: Text
-    , userDataIdent      :: Text
-    , userDataEmail      :: Text
-    , userDataPassword   :: Text
-    , userDataRights     :: [AccessType] }
 
 userForm :: Form UserData
 userForm _extra = do
