@@ -9,12 +9,35 @@ import           Data.Aeson
 
 
 data AccessType
-    = ListUsers
+    -- super user
+    -- users
+    = ListUsers -- ^ all site users
     | CreateUser
-    | ViewUser
+    | ViewUser -- ^ all user data
     | UpdateUser
     | DeleteUser
+    -- currencies
+    | ListCurrency
+    | CreateCurrency
+    | UpdateCurrency
+    | DeleteCurrency
+    -- treasurer
+    | ListDeposit
+    | ListWithdrawal
+    | ConfirmDeposit
+    | ConfirmWithdrawal
+    | RejectDeposit
+    | RejectWithdrawal
+    -- operator
+    | MakeDeposit
+    | RequestWithdrawal
     | SelfBalanceView
+    | SelfBalanceHistory
+    | SelfListDeposit
+    | SelfListWithdrawal
+    | SelfDepositCancel
+    | SelfWithdrawalCancel
+
     deriving (Generic, Show, Read, Eq, Ord, Enum, Bounded)
 derivePersistField "AccessType"
 
