@@ -1,9 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Handler.Manage.User.List where
 
-import           Import             hiding ( on, (!=.), (==.) )
+import           Import                  as I hiding ( on, (!=.), (==.) )
+import           Utils.Common            ( jsonMerge )
+import           Utils.Database.UserData
 
-import           Data.Aeson         as A
 import           Database.Esqueleto
 
 
@@ -20,8 +21,4 @@ getManageListUserR = do
         provideRep . return $ object
             [ "users" .= map (toJSON . clean) list ]
     where
-        clean (u, _, _) = cleanUpUser u
-        cleanUpUser :: Entity User -> A.Value
-        cleanUpUser (Entity idx v) = object
-            [ "id" .= toJSON idx
-            , "ident" .= toJSON (userIdent v) ]
+        clean (u, e, m) = jsonMerge [ cleanUpUser u, cleanUpEmail e, cleanUpMeta m ]
