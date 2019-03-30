@@ -189,8 +189,8 @@ authorizeByAccess ats = do
     case user of
         Nothing -> unauthorizedI MsgPleaseLogInText
         Just (Entity ident _) -> do
-            _rights <- map (userRightsAccess . entityVal) <$> getUserRights ident
-            if isSubsequenceOf (sort ats) (sort rights)
+            accessRights <- map (userRightsAccess . entityVal) <$> getUserRights ident
+            if isSubsequenceOf (sort ats) (sort accessRights)
                 then pure Authorized
                 else unauthorizedI MsgAccessDenied
     where
