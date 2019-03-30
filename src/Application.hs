@@ -51,6 +51,7 @@ import           Handler.Common
 import           Handler.Home
 import           Handler.Manage.User.Create
 import           Handler.Manage.User.List
+import           Handler.Manage.User.Update
 
 import           Utils.Database.Password              ( saltPass )
 
