@@ -8,6 +8,9 @@
         console.warn('ReactJS DISABLED. Falling back')
     } else {
         console.log('ReactJS enabled.  Removing fallback')
+        console.groupCollapsed('Fallback Details')
+        console.log(f)
+        console.groupEnd()
         f.remove()
 
     }
