@@ -7,10 +7,10 @@ ReactDOM.render(
     React.createElement( _ui.app, {
         nav: {
             items: {
-                collapsible: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) collapsibleMenues))))},
+                collapsible: #{rawEncodeMap (menuGroupJson routeRender) collapsibleMenues},
                 sticky: {
-                    left: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) leftStickyMenues))))},
-                    right: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) rightStickyMenues))))}
+                    left: #{rawEncodeMap (menuGroupJson routeRender) leftStickyMenues},
+                    right: #{rawEncodeMap (menuGroupJson routeRender) rightStickyMenues}
                 }
             },
             routes: [
