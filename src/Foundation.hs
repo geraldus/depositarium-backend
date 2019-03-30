@@ -37,6 +37,7 @@ import           Utils.Nav               ( partCollapsibleMenues )
 import qualified Crypto.Nonce            as Nonce
 import           Data.Aeson              ( encode )
 import           Data.List               ( isSubsequenceOf )
+import qualified Database.Esqueleto      as E
 import           Text.Julius             ( RawJS (..) )
 
 -- data AppChannels = AppChannels
@@ -137,13 +138,14 @@ instance Yesod App where
         -> Bool       -- ^ Whether or not this is a "write" request.
         -> Handler AuthResult
     -- Routes not requiring authentication.
-    isAuthorized (AuthR _) _         = return Authorized
-    isAuthorized HomeR _             = return Authorized
-    isAuthorized ManageListUserR _   = authorizeByAccess [ ListUsers ]
-    isAuthorized ManageCreateUserR _ = authorizeByAccess [ CreateUser ]
-    isAuthorized FaviconR _          = return Authorized
-    isAuthorized RobotsR _           = return Authorized
-    isAuthorized (StaticR _) _       = return Authorized
+    isAuthorized (AuthR _) _             = return Authorized
+    isAuthorized HomeR _                 = return Authorized
+    isAuthorized ManageListUserR _       = authorizeByAccess [ ListUsers, UpdateUser ]
+    isAuthorized ManageCreateUserR _     = authorizeByAccess [ CreateUser ]
+    isAuthorized (ManageUpdateUserR _) _ = authorizeByAccess [ UpdateUser ]
+    isAuthorized FaviconR _              = return Authorized
+    isAuthorized RobotsR _               = return Authorized
+    isAuthorized (StaticR _) _           = return Authorized
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -271,7 +273,11 @@ instance YesodAuth App where
     -- authLayout :: Widget -> Handler Html
     authLayout widget =
         liftHandler . defaultLayout $ do
-            [whamlet|<script>const NO_REACT = true|]
+            msg <- liftHandler getMessage
+            [whamlet|
+                $maybe m <- msg
+                    <div .alert>#{m}
+                <script>const NO_REACT = true|]
             widget
 
     loginHandler :: AuthHandler App Html
@@ -390,37 +396,72 @@ appMenuItems
     -> Handler [ MenuGroup App ]
 appMenuItems user _ = do
     msg <- getMessageRender
-    rights <- case user of
+    accessRights <- case user of
         Nothing     -> pure [ ]
         Just (u, _) ->
             map entityVal
             <$> runDB (selectList [ UserRightsUser ==. u ] [ ])
-    $logInfo $ pack $ show $ rights
     return $
         [ SingleItem (itemHome msg) cl pl
         ]
-        <> userItems msg user (plainAccess rights)
+        <> userItems msg user (plainAccess accessRights)
   where
+    userItems
+        :: (AppMessage -> Text)
+        -> Maybe (UserId, User)
+        -> [ AccessType ]
+        -> [ MenuGroup App ]
     userItems msg Nothing _ = guestItems msg
-    userItems msg (Just _) access =
-        let mug = manageUserGroup msg access
-            items = mug <> [ ]
-        in [ ItemGroup items st pr (msg MsgManageUserMenuTitle) ]
-    guestItems r  = [ SingleItem (itemSignIn r) st pr ]
-    itemHome msg = MenuItem (msg MsgHomePageTitle) HomeR
-    itemSignIn msg = MenuItem (msg MsgSignInPageTitle) (AuthR LoginR)
-    itemListUsers msg = MenuItem (msg MsgListUserPageTitle) ManageListUserR
-    itemCreateUser msg = MenuItem (msg MsgCreateUserPageTitle) ManageCreateUserR
-    plainAccess = map userRightsAccess
-    cl = MTCollapsible
-    st = MTSticky
-    pl = MPLeft
-    pc = MPCenter
-    pr = MPRight
-    manageUserGroup msg access =
+    userItems msg (Just (_, u)) access =
+        let manageItems = manageUserItems msg access
+            loggedItems =  loggedUserItems msg
+            operatorItems = operatorUserItems msg access
+            manage = [ ItemGroup manageItems st pr (msg MsgManageUserMenuTitle) ]
+            operator = [ ItemGroup operatorItems st pl (msg MsgProfileViewMenuTitle) ]
+            logged = [ ItemGroup loggedItems st pr (userIdent u) ]
+        in cleanGroup $ manage <> operator <> logged
+
+
+    guestItems :: (AppMessage -> Text) -> [ MenuGroup App ]
+    guestItems msg = [ SingleItem (itemSignIn msg) st pr ]
+
+    manageUserItems :: (AppMessage -> Text) -> [ AccessType ] -> [ MenuItem App ]
+    manageUserItems msg access =
         let listUsers = [itemListUsers msg | ListUsers `elem` access]
             createUser = [itemCreateUser msg | CreateUser `elem` access]
         in listUsers <> createUser <> [ ]
+
+    operatorUserItems :: (AppMessage -> Text) -> [ AccessType ] -> [ MenuItem App ]
+    operatorUserItems msg access =
+        let viewProfile = [itemOperatorProfileView msg | SelfBalanceView `elem` access]
+        in viewProfile <> [ ]
+
+    loggedUserItems msg = [ itemSignOut msg ]
+
+    itemHome msg = MenuItem (msg MsgHomePageTitle) HomeR
+
+    itemSignIn msg = MenuItem (msg MsgSignInPageTitle) (AuthR LoginR)
+    itemSignOut msg = MenuItem (msg MsgSignOut) (AuthR LogoutR)
+
+    itemListUsers msg = MenuItem (msg MsgListUserPageTitle) ManageListUserR
+    itemCreateUser msg = MenuItem (msg MsgCreateUserPageTitle) ManageCreateUserR
+
+    itemOperatorProfileView msg
+        = MenuItem (msg MsgProfileViewMenuTitle) OperatorProfileViewR
+
+    cleanGroup :: [MenuGroup App] -> [MenuGroup App]
+    cleanGroup gs = reverse $ step [] gs
+        where step acc []                        = acc
+              step acc (ItemGroup [] _ _ _:rest) = step acc rest
+              step acc (x:rest)                  = step (x:acc) rest
+
+    plainAccess = map userRightsAccess
+
+    cl = MTCollapsible
+    st = MTSticky
+    pl = MPLeft
+    -- pc = MPCenter
+    pr = MPRight
 
 allAccessRights  :: [ AccessType ]
 allAccessRights = [ minBound .. maxBound ]
