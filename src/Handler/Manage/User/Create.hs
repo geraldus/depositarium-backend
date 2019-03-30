@@ -4,13 +4,13 @@ module Handler.Manage.User.Create where
 
 import           Import
 
+import           Form.UserData
 import           Local.Persist.Access
 import           Type.UserData
 import           Utils.Common
 import           Utils.Database.Password ( saltPass )
 
 import           Data.Aeson              as A
-import qualified Data.HashMap.Lazy       as HML
 
 
 getManageCreateUserR :: Handler Html
@@ -19,7 +19,7 @@ getManageCreateUserR = defaultLayout [whamlet|user-create|]
 postManageCreateUserR :: Handler TypedContent
 postManageCreateUserR = do
     msg <- getMessageRender
-    ((formData, _), _) <- runFormPost userForm
+    formData <- runInputPostResult $ userDataIForm False
     res <- processForm msg formData
     selectRep . provideRep $ pure res
     where
