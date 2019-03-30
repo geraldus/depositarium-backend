@@ -251,11 +251,17 @@ instance YesodAuth App where
                  => Creds App -> m (AuthenticationResult App)
     authenticate Creds{..} = case credsPlugin of
         "PRIZM Yesod Auth Plugin" -> do
-            x <- liftHandler . runDB . getBy $ UniqueUser credsIdent
-            return $ case x of
-                Just (Entity uid _) -> Authenticated uid
-                Nothing             -> UserError InvalidLogin
-        -- TODO: Better error when plugin name not recognized
+            entity <- liftHandler . runDB $ E.select . E.from $
+                \(u `E.LeftOuterJoin` e) -> do
+                    E.on (E.just (u E.^. UserId) E.==. (e E.?. EmailUser))
+                    E.where_
+                        (       u E.^. UserIdent E.==. E.val credsIdent
+                          E.||. e E.?. EmailEmail E.==. E.just (E.val credsIdent) )
+                    return u
+            return $ case entity of
+                (Entity uid _:_) -> Authenticated uid
+                []               -> UserError InvalidLogin
+        -- FIXME: Provide better error when plugin name not recognized
         _ -> return $ UserError InvalidLogin
 
     -- You can add other plugins like Google Email, email or OAuth here
