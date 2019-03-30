@@ -11,7 +11,6 @@ const NavGroup = props => {
         ].join(' ')
     const idGroup = `nav-dropdown-${props.index}`
     const { items } = props
-    console.log(props)
     return (
         <li id={idGroup} className={classes}>
             <a
