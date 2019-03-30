@@ -12,3 +12,5 @@
 
 /manage/users/ ManageListUserR GET
 /manage/users/create ManageCreateUserR GET POST
+/manage/users/update/#UserId ManageUpdateUserR GET POST
+
