@@ -1,7 +1,7 @@
 import React from 'react'
 
 import AppNav from './app/nav'
-
+import { collapsedDetails } from './utils'
 
 export default class App extends React.Component {
     currentKnownRoute () {
@@ -19,9 +19,28 @@ export default class App extends React.Component {
     currentRouteComponent () {
         const route = this.currentKnownRoute ()
         if (route !== null) {
-            console.log(route)
-            return (props) => <route.component { ... route.props }/>
+            collapsedDetails('This route is known', route)
+            const c = route.component
+            const def = c.defaultProps
+            return (props) => <route.component { ...def } { ...route.props } { ...props} />
         } else {
+            console.warn('Unknown route')
+            if (typeof CURRENT_ROUTE_CONFIG != typeof undefined) {
+                collapsedDetails('Found current route config', CURRENT_ROUTE_CONFIG)
+                const { componentName, props } = CURRENT_ROUTE_CONFIG
+                if (_ui.hasOwnProperty(componentName)) {
+                    const ui = _ui[componentName]
+                    collapsedDetails('Running current route component', ui)
+                    const def = _ui[componentName].defaultProps
+                    return (propsOverride) => ui({ ... def, ... props, ... propsOverride })
+                } else {
+                    collapsedDetails(
+                        'Current route Component ' + componentName + ' not found in',
+                        _ui
+                        )
+                    console.warn( _ui)
+                }
+            }
             return () => null
         }
     }
