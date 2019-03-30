@@ -426,6 +426,13 @@ appMenuItems user _ = do
             createUser = [itemCreateUser msg | CreateUser `elem` access]
         in listUsers <> createUser <> [ ]
 
+allAccessRights  :: [ AccessType ]
+allAccessRights = [ minBound .. maxBound ]
+
+allAccessRightsJ :: Value
+allAccessRightsJ = toJSON $ map
+        (\ar -> let x = txt ar in (AccessRightJ x x x))
+        allAccessRights
 
 -- ** React
 
