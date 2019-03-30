@@ -119,11 +119,7 @@ instance Yesod App where
         idApp <- newIdent
         (_title, _parents) <- breadcrumbs
         msg <- getMessageRender
-        let accessRightsList = [ minBound .. maxBound ] :: [ AccessType ]
-        let accessRightsJList = map
-                (\ar -> let x = pack (show ar) in toJSON (AccessRightJ x x x))
-                accessRightsList
-        let accessRightsJSON = decodeUtf8 (toStrict (encode accessRightsJList))
+        let accessRightsJSON = encodeStrictText allAccessRightsJ
         pc <- widgetToPageContent $ do
             addReactScripts
             addReactBundle
