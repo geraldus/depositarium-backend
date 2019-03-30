@@ -8,6 +8,7 @@ WrongRequest: Неверный запрос
 PleaseLogInText: Пожалуйста, войдите в систему для просмотра этой страницы
 AccessDenied: Доступ запрещён
 FormFailureErrorText: Форма содержит ошибки
+NotFoundErrorText: Запрашиваемые данные не найдены
 
 # PAGE TITLES
 
@@ -24,11 +25,19 @@ CreateUserPageTitle: Создание пользователя
 UpdateUserPageTitle: Редактирование пользователя
 DeleteUserPageTitle: Удаление пользователя
 
+## OPERATORS
+
+ProfileViewPageTitle: Кабинет
 
 # MENU TITLES
 
 ## MANAGE
+
 ManageUserMenuTitle: Управление пользователями
+
+## OPERATORS
+
+ProfileViewMenuTitle: Мой кабинет
 
 
 
@@ -36,6 +45,9 @@ ManageUserMenuTitle: Управление пользователями
 Save: Сохранить
 Cancel: Отмена
 ChangesSaved: Изменения сохранены
+
+SignOut: Выход
+
 User: Пользователь
 EmailAddress: Адрес эл.почты
 Password: Пароль
