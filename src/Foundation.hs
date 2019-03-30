@@ -112,7 +112,7 @@ instance Yesod App where
         master <- getYesod
         user <- maybeAuthPair
         route <- getCurrentRoute
-        (collapsibleMenues, (_, rightStickyMenues, _)) <- partCollapsibleMenues
+        (collapsibleMenues, (leftStickyMenues, rightStickyMenues, _)) <- partCollapsibleMenues
                 <$> appMenuItems user route
         routeRender <- getUrlRender
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.

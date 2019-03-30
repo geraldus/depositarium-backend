@@ -7,6 +7,8 @@ import           Import.NoFoundation
 
 import           Utils.Time
 
+import           Data.Aeson          ( encode )
+import qualified Data.HashMap.Lazy   as HML
 import           Data.Time.Format    ( TimeLocale (..) )
 
 
@@ -18,6 +20,28 @@ setCompositeTitle
 setCompositeTitle ms = do
     r <- getMessageRender
     setTitle . toHtml . intercalate " | " . map r $ ms
+
+-- ** Misc
+
+txt :: Show a => a -> Text
+txt = pack . show
+
+
+-- *** JSON
+
+encodeStrictText :: ToJSON a => a -> Text
+encodeStrictText = decodeUtf8 . toStrict . encode
+
+jsonMerge :: [Value] -> Value
+jsonMerge = Object . HML.unions . map (\(Object x) -> x)
+
+
+errorResponseJ :: Text -> Value
+errorResponseJ errorText = object
+    [ "type"    .= String "error"
+    , "status"  .= String "failure"
+    , "message" .= toJSON errorText ]
+
 
 
 {- TIME -}

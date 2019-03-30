@@ -17,6 +17,10 @@ const AppNav = (props) => {
                     labels={props.labels}
                 />
             }
+            {typeof items.sticky.left != typeof undefined &&
+                <NavBar
+                    items={items.sticky.left}
+                    renderItem={props.renderItem}/>}
             {typeof items.sticky.right != typeof undefined &&
                 <NavBar
                     items={items.sticky.right}
@@ -45,6 +49,7 @@ const withDeafaultProps = defaultProps({
     items: {
         collapsible: [],
         sticky: {
+            left: [],
             right: []
         }
     },

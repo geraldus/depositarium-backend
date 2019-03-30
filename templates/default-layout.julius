@@ -9,6 +9,7 @@ ReactDOM.render(
             items: {
                 collapsible: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) collapsibleMenues))))},
                 sticky: {
+                    left: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) leftStickyMenues))))},
                     right: #{rawJS (decodeUtf8 (toStrict (encode (map (menuGroupJson routeRender) rightStickyMenues))))}
                 }
             },
