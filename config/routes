@@ -14,3 +14,4 @@
 /manage/users/create ManageCreateUserR GET POST
 /manage/users/update/#UserId ManageUpdateUserR GET POST
 
+/operator/profile OperatorProfileViewR GET

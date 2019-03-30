@@ -43,6 +43,16 @@ ReactDOM.render(
                         apiUrl: '@?{(ManageCreateUserR, [("_accept", "application/json")])}',
                         accessRights: #{rawJS accessRightsJSON}
                     },
+                },
+                {
+                    path: '@{OperatorProfileViewR}',
+                    exact: true,
+                    component: _ui.operatorProfileView,
+                    props: {
+                        apiGetBalancesUrl: '',
+                        depositCreateUrl: '',
+                        withdrawalCreateUrl: ''
+                    },
                 }
             ]
         }
