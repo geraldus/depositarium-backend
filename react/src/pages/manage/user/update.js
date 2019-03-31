@@ -5,7 +5,7 @@ import 'whatwg-fetch'
 
 import UserForm from './form'
 import { setUserData } from './utils'
-import '../../utils'
+import '../../../utils'
 
 
 export class UpdateUser extends React.Component {

@@ -3,8 +3,8 @@ import { defaultProps } from 'recompose'
 import _ from 'lodash'
 import 'whatwg-fetch'
 
-import FormGroup from '../../form/form-group'
-import FormCheck from '../../form/form-check'
+import FormGroup from '../../../form/form-group'
+import FormCheck from '../../../form/form-check'
 
 
 const mkFullName = (l, f, p) =>
