@@ -24,6 +24,7 @@ ListUserPageTitle: Пользователи
 CreateUserPageTitle: Создание пользователя
 UpdateUserPageTitle: Редактирование пользователя
 DeleteUserPageTitle: Удаление пользователя
+ListCurrencyPageTitle: Валюты
 
 ## OPERATORS
 
@@ -34,11 +35,11 @@ ProfileViewPageTitle: Кабинет
 ## MANAGE
 
 ManageUserMenuTitle: Управление пользователями
+ManageCurrencyMenuTitle: Управление валютами
 
 ## OPERATORS
 
 ProfileViewMenuTitle: Мой кабинет
-
 
 
 # MISC COMMON PHRASES
