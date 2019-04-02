@@ -6,6 +6,7 @@ import           Import
 import           Local.Persist.Access
 
 import           Type.UserData
+import           Utils.Common         ( orEmpty )
 
 import           Data.Aeson           ( decode )
 import           Text.Read            ( readMaybe )
@@ -27,5 +28,3 @@ userDataIForm passwordless = UserData
             catMaybes . mread . decode . encodeUtf8 . fromStrict
 
         mread = maybe [] (map readMaybe)
-
-        orEmpty = fromMaybe ""
