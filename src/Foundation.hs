@@ -34,7 +34,6 @@ import           Type.App
 import           Utils.Common
 
 import qualified Crypto.Nonce            as Nonce
-import           Data.Aeson              ( encode )
 import           Data.List               ( isSubsequenceOf )
 import qualified Database.Esqueleto      as E
 import           Text.Julius             ( RawJS (..) )
@@ -298,7 +297,7 @@ instance YesodAuth App where
                                     <label for="pass-in">_{MsgPassword}
                                     <input type=password .form-control #pass-in placeholder="******" name="password">
                                 <div .form-group .row>
-                                    <div .col-12 .col-sm-9 col-md-6 .mx-auto>
+                                    <div .col .col-sm-9 col-md-6 .mx-auto>
                                         <button .btn.btn-lg.btn-block.btn-outline-primary type=submit>войти
                 |]
 instance YesodAuthPersist App where
@@ -400,7 +399,7 @@ appMenuItems user _ = do
             map entityVal
             <$> runDB (selectList [ UserRightsUser ==. u ] [ ])
     return $
-        [ SingleItem (itemHome msg) cl pl
+        [ SingleItem (itemHome msg)
         ]
         <> userItems msg user (plainAccess accessRights)
   where
@@ -412,22 +411,29 @@ appMenuItems user _ = do
     userItems msg Nothing _ = guestItems msg
     userItems msg (Just (_, u)) access =
         let manageItems = manageUserItems msg access
-            loggedItems =  loggedUserItems msg
+            currencyItems = manageCurrencyItems msg access
+            loggedItems = loggedUserItems msg
             operatorItems = operatorUserItems msg access
-            manage = [ ItemGroup manageItems st pr (msg MsgManageUserMenuTitle) ]
-            operator = [ ItemGroup operatorItems st pl (msg MsgProfileViewMenuTitle) ]
-            logged = [ ItemGroup loggedItems st pr (userIdent u) ]
-        in cleanGroup $ manage <> operator <> logged
+            manage =   [ ItemGroup manageItems (msg MsgManageUserMenuTitle) ]
+            manageCurrency = [ ItemGroup currencyItems (msg MsgManageCurrencyMenuTitle) ]
+            operator = [ ItemGroup operatorItems (msg MsgProfileViewMenuTitle) ]
+            logged =   [ ItemGroup loggedItems (userIdent u) ]
+        in cleanGroup $ manage <> manageCurrency <> operator <> logged
 
 
     guestItems :: (AppMessage -> Text) -> [ MenuGroup App ]
-    guestItems msg = [ SingleItem (itemSignIn msg) st pr ]
+    guestItems msg = [ ItemGroup [ itemSignIn msg ] "" ]
 
     manageUserItems :: (AppMessage -> Text) -> [ AccessType ] -> [ MenuItem App ]
     manageUserItems msg access =
         let listUsers = [itemListUsers msg | ListUsers `elem` access]
             createUser = [itemCreateUser msg | CreateUser `elem` access]
         in listUsers <> createUser <> [ ]
+
+    manageCurrencyItems :: (AppMessage -> Text) -> [ AccessType ] -> [ MenuItem App ]
+    manageCurrencyItems msg access =
+        let list = [itemListСurrency msg | ListCurrency `elem` access]
+        in list
 
     operatorUserItems :: (AppMessage -> Text) -> [ AccessType ] -> [ MenuItem App ]
     operatorUserItems msg access =
@@ -444,22 +450,18 @@ appMenuItems user _ = do
     itemListUsers msg = MenuItem (msg MsgListUserPageTitle) ManageListUserR
     itemCreateUser msg = MenuItem (msg MsgCreateUserPageTitle) ManageCreateUserR
 
+    itemListСurrency msg = MenuItem (msg MsgListCurrencyPageTitle) ManageListCurrencyR
+
     itemOperatorProfileView msg
         = MenuItem (msg MsgProfileViewMenuTitle) OperatorProfileViewR
 
     cleanGroup :: [MenuGroup App] -> [MenuGroup App]
     cleanGroup gs = reverse $ step [] gs
-        where step acc []                        = acc
-              step acc (ItemGroup [] _ _ _:rest) = step acc rest
-              step acc (x:rest)                  = step (x:acc) rest
+        where step acc []                    = acc
+              step acc (ItemGroup [] _:rest) = step acc rest
+              step acc (x:rest)              = step (x:acc) rest
 
     plainAccess = map userRightsAccess
-
-    cl = MTCollapsible
-    st = MTSticky
-    pl = MPLeft
-    -- pc = MPCenter
-    pr = MPRight
 
 allAccessRights  :: [ AccessType ]
 allAccessRights = [ minBound .. maxBound ]
