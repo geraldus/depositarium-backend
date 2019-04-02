@@ -13,5 +13,7 @@
 /manage/users/ ManageListUserR GET
 /manage/users/create ManageCreateUserR GET POST
 /manage/users/update/#UserId ManageUpdateUserR GET POST
+/manage/currency/list ManageListCurrencyR GET
+/manage/currency/create-temporal ManageCreateCurrencyTemporalR POST
 
 /operator/profile OperatorProfileViewR GET

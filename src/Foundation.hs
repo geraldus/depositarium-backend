@@ -140,6 +140,9 @@ instance Yesod App where
     isAuthorized ManageListUserR _       = authorizeByAccess [ ListUsers, UpdateUser ]
     isAuthorized ManageCreateUserR _     = authorizeByAccess [ CreateUser ]
     isAuthorized (ManageUpdateUserR _) _ = authorizeByAccess [ UpdateUser ]
+    isAuthorized ManageListCurrencyR _ = authorizeByAccess [ ListCurrency ]
+    isAuthorized ManageCreateCurrencyTemporalR _ =
+            authorizeByAccess [ CreateCurrency ]
     isAuthorized FaviconR _              = return Authorized
     isAuthorized RobotsR _               = return Authorized
     isAuthorized (StaticR _) _           = return Authorized
