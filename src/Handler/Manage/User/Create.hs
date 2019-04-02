@@ -9,6 +9,7 @@ import           Local.Persist.Access
 import           Type.UserData
 import           Utils.Common
 import           Utils.Database.Password ( saltPass )
+import           Utils.Form
 
 import           Data.Aeson              as A
 
@@ -24,16 +25,12 @@ postManageCreateUserR = do
     res <- processForm msg formData
     selectRep . provideRep $ pure res
     where
-        processForm msg FormMissing = pure $
-            errorResponseJ (msg MsgWrongRequest)
-        processForm msg (FormFailure errors) = pure $
-            formErrorsResponse msg errors
-        processForm _ (FormSuccess fd) = do
-            ud <- createUser fd
-            return $ object [ "type" .= A.String "success" ]
-
-        formErrorsResponse msg =
-            formErrorsResponseJ (msg MsgFormFailureErrorText)
+        processForm msg result = processFormJ
+            (msg MsgWrongRequest, msg MsgFormFailureErrorText)
+            result
+            $ \fd ->  do
+                ud <- createUser fd
+                return $ object [ "type" .= A.String "success" ]
 
 
 accessRightsList :: [ (Text, AccessType) ]
