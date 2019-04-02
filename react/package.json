@@ -34,7 +34,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "rollup -cw"
+    "watch": "rollup -cw",
+    "build": "rollup -c"
   },
   "author": "Arthur Sakhievich Fayzrakhmanov",
   "license": "0BSD"
