@@ -49,6 +49,17 @@ errorResponseJ errorText = object
     , "status"  .= String "failure"
     , "message" .= toJSON errorText ]
 
+formErrorsResponseJ
+    :: (Functor f, ToJSON a, ToJSON (f Value))
+    => Text -> f a -> Value
+formErrorsResponseJ msg errors =
+    errorResponseWithDataJ msg [ "form-errors" .= map toJSON errors ]
+
+errorResponseWithDataJ
+    :: Text -> [(Text, Value)] -> Value
+errorResponseWithDataJ errorText =
+    jsonMerge . (:) (errorResponseJ errorText) . (:[]) . object
+
 
 
 {- TIME -}

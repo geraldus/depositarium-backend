@@ -16,6 +16,7 @@ import           Data.Aeson              as A
 getManageCreateUserR :: Handler Html
 getManageCreateUserR = defaultLayout [whamlet|user-create|]
 
+-- FIXME: Generalize over Message Render, e.g. MessageRender -> Handler ...
 postManageCreateUserR :: Handler TypedContent
 postManageCreateUserR = do
     msg <- getMessageRender
@@ -24,21 +25,15 @@ postManageCreateUserR = do
     selectRep . provideRep $ pure res
     where
         processForm msg FormMissing = pure $
-            dataMissingResponse msg
+            errorResponseJ (msg MsgWrongRequest)
         processForm msg (FormFailure errors) = pure $
             formErrorsResponse msg errors
         processForm _ (FormSuccess fd) = do
             ud <- createUser fd
             return $ object [ "type" .= A.String "success" ]
 
-        dataMissingResponse msg = errorResponseJ (msg MsgWrongRequest)
-
-        formErrorsResponse msg errors = errorResponseWithData
-            (msg MsgFormFailureErrorText)
-            [ "form-errors" .= map toJSON errors ]
-
-        errorResponseWithData errorText =
-            jsonMerge . (:) (errorResponseJ errorText) . (:[]) . object
+        formErrorsResponse msg =
+            formErrorsResponseJ (msg MsgFormFailureErrorText)
 
 
 accessRightsList :: [ (Text, AccessType) ]
