@@ -64,34 +64,3 @@ createUser UserData{..} = do
 
         mkUserRights :: UserId -> AccessType -> UserRights
         mkUserRights = UserRights
-
-
-
--- userForm :: Form UserData
--- userForm _extra = do
---     (name, _) <- mreq textField "name" Nothing
---     (patronymic, _) <- mreq textField "patronymic" Nothing
---     (lastname, _) <- mreq textField "lastname" Nothing
---     (ident, _) <- mreq textField "ident" Nothing
---     (email, _) <- mreq textField "email" Nothing
---     (password, _) <- mreq textField "password" Nothing
---     (accessRights, _) <- mreq
---             (checkboxesField (pure accessRightsOpts))
---             "rights"
---             Nothing
---     let res = UserData
---             <$> name
---             <*> patronymic
---             <*> lastname
---             <*> ident
---             <*> email
---             <*> password
---             <*> accessRights
---     return (res, [whamlet||])
---     where
---         accessRightsOpts = mkOptionList accessRightsOL
-
---         accessRightsOL :: [ Option AccessType ]
---         accessRightsOL = map
---             (\r -> Option (txt r) r (txt r))
---             [minBound .. maxBound]
