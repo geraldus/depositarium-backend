@@ -32,7 +32,6 @@ import           Local.Auth
 import           Local.Persist.Access
 import           Type.App
 import           Utils.Common
-import           Utils.Nav               ( partCollapsibleMenues )
 
 import qualified Crypto.Nonce            as Nonce
 import           Data.Aeson              ( encode )
@@ -113,8 +112,7 @@ instance Yesod App where
         master <- getYesod
         user <- maybeAuthPair
         route <- getCurrentRoute
-        (collapsibleMenues, (leftStickyMenues, rightStickyMenues, _)) <- partCollapsibleMenues
-                <$> appMenuItems user route
+        menues <- appMenuItems user route
         routeRender <- getUrlRender
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
         idApp <- newIdent
