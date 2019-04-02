@@ -63,20 +63,20 @@ RoleDesc json
     deriving Show Typeable
 
 Currency json
-    name   Text
-    abbr   Text
+    ident  Text
     code   Text
     sign   Text
     type   CurrencyType
-    UniqueCurrency name abbr code sign type
+    UniqueCurrency ident code sign type
     deriving Show Typeable
 
 CurrencyDesc json
     currency      CurrencyId
     language      Text
+    abbr          Text
     htmlName      Text
+    htmlLongName  Text
     htmlDesc      Text
-    htmkLongName  Text
     UniqueCurrencyDesc currency language
     deriving Show Typeable
 
