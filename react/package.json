@@ -1,6 +1,6 @@
 {
   "name": "mao-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Client side React Components for MAO website",
   "main": "index.js",
   "dependencies": {
