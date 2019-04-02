@@ -7,9 +7,9 @@ import           Import
 import           Form.UserData
 import           Local.Persist.Access
 import           Type.UserData
+import           Utils.App.Common        ( processAppFormJ )
 import           Utils.Common
 import           Utils.Database.Password ( saltPass )
-import           Utils.Form
 
 import           Data.Aeson              as A
 
@@ -20,13 +20,11 @@ getManageCreateUserR = defaultLayout [whamlet|user-create|]
 -- FIXME: Generalize over Message Render, e.g. MessageRender -> Handler ...
 postManageCreateUserR :: Handler TypedContent
 postManageCreateUserR = do
-    msg <- getMessageRender
     formData <- runInputPostResult $ userDataIForm False
-    res <- processForm msg formData
+    res <- processForm formData
     selectRep . provideRep $ pure res
     where
-        processForm msg result = processFormJ
-            (msg MsgWrongRequest, msg MsgFormFailureErrorText)
+        processForm result = processAppFormJ
             result
             $ \fd ->  do
                 ud <- createUser fd
