@@ -6,13 +6,7 @@ const appRoot = document.querySelector(#{"#" <> idApp})
 ReactDOM.render(
     React.createElement( _ui.app, {
         nav: {
-            items: {
-                collapsible: #{rawEncodeMap (menuGroupJson routeRender) collapsibleMenues},
-                sticky: {
-                    left: #{rawEncodeMap (menuGroupJson routeRender) leftStickyMenues},
-                    right: #{rawEncodeMap (menuGroupJson routeRender) rightStickyMenues}
-                }
-            },
+            items: #{rawEncodeMap (menuGroupJson routeRender) menues},
             routes: [
                 {
                     path: '@{HomeR}',

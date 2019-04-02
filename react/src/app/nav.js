@@ -9,22 +9,11 @@ const AppNav = (props) => {
     const hasStyle = typeof props.style != typeof undefined
     return (
         <nav className={props.navClassNames} style={hasStyle? props.style : undefined}>
-            {items.collapsible.length > 0 &&
                 <CollapseNav
-                    items={items.collapsible}
+                    items={items}
                     menuId={menuId}
                     renderItem={props.renderItem}
-                    labels={props.labels}
-                />
-            }
-            {typeof items.sticky.left != typeof undefined &&
-                <NavBar
-                    items={items.sticky.left}
-                    renderItem={props.renderItem}/>}
-            {typeof items.sticky.right != typeof undefined &&
-                <NavBar
-                    items={items.sticky.right}
-                    renderItem={props.renderItem}/>}
+                    labels={props.labels}/>
         </nav>
     )
 }
@@ -46,13 +35,7 @@ const withDeafaultProps = defaultProps({
     labels: {
         ariaExpandMenu: 'Раскрыть меню сайта'
     },
-    items: {
-        collapsible: [],
-        sticky: {
-            left: [],
-            right: []
-        }
-    },
+    items: [],
     renderItem: props => <NavItem { ...props }/>
 })
 
