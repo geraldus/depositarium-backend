@@ -1,0 +1,267 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 5810b499e51157332fe10c9bbd38dfd0319695ccb23a8edd62fd90607f1854bb
+
+name:           ioa
+version:        0.1.2
+build-type:     Simple
+
+flag dev
+  description: Turn on development settings, like auto-reload templates.
+  manual: False
+  default: False
+
+flag library-only
+  description: Build for use with "yesod devel"
+  manual: False
+  default: False
+
+library
+  exposed-modules:
+      Application
+      Form.Currency
+      Form.UserData
+      Foundation
+      Handler.API.Nav
+      Handler.Common
+      Handler.Home
+      Handler.Manage.Currency.Create
+      Handler.Manage.Currency.List
+      Handler.Manage.User.Create
+      Handler.Manage.User.List
+      Handler.Manage.User.Update
+      Handler.Operator.Deposit.Confirm
+      Handler.Operator.Deposit.Create
+      Handler.Operator.Deposit.Index
+      Handler.Operator.Deposit.List
+      Handler.Operator.Profile.View
+      Handler.Operator.Withdrawal.List
+      Import
+      Import.NoFoundation
+      Local.Auth
+      Local.Auth.Messages
+      Local.Auth.PrizmJSONPlugin
+      Local.Persist.Access
+      Local.Persist.Currency
+      Local.Persist.Request
+      Local.Persist.Summary
+      Local.Persist.Wallet
+      Model
+      Settings
+      Settings.StaticFiles
+      Type.App
+      Type.TemporalPrograms
+      Type.UserData
+      Utils.App.Common
+      Utils.Common
+      Utils.Database.Password
+      Utils.Database.UserData
+      Utils.Form
+      Utils.Nav
+      Utils.Time
+  other-modules:
+      Paths_ioa
+  hs-source-dirs:
+      src
+  default-extensions: TemplateHaskell QuasiQuotes NoImplicitPrelude
+  build-depends:
+      HaskellNet
+    , HaskellNet-SSL
+    , aeson >=0.6 && <1.5
+    , base >=4.8.2.0 && <4.9 || >=4.9.1.0 && <5
+    , base16-bytestring
+    , blaze-html
+    , bytestring >=0.9 && <0.11
+    , case-insensitive
+    , classy-prelude >=1.4 && <1.6
+    , classy-prelude-conduit >=1.4 && <1.6
+    , classy-prelude-yesod >=1.4 && <1.6
+    , conduit >=1.0 && <2.0
+    , containers
+    , cryptonite
+    , data-default
+    , directory >=1.1 && <1.4
+    , esqueleto
+    , fast-logger >=2.2 && <2.5
+    , file-embed
+    , foreign-store
+    , formatting
+    , hjsmin >=0.1 && <0.3
+    , http-client
+    , http-client-tls
+    , http-conduit >=2.3 && <2.4
+    , memory
+    , mime-mail
+    , monad-control >=0.3 && <1.1
+    , monad-logger >=0.3 && <0.4
+    , nonce
+    , persistent >=2.8 && <2.10
+    , persistent-postgresql >=2.8 && <2.10
+    , persistent-template >=2.5 && <2.9
+    , safe
+    , shakespeare >=2.0 && <2.1
+    , split
+    , template-haskell
+    , text >=0.11 && <2.0
+    , time
+    , unordered-containers
+    , vector
+    , wai
+    , wai-extra >=3.0 && <3.1
+    , wai-logger >=2.2 && <2.4
+    , warp >=3.0 && <3.3
+    , yaml >=0.8 && <0.12
+    , yesod >=1.6 && <1.7
+    , yesod-auth >=1.6 && <1.7
+    , yesod-core >=1.6 && <1.7
+    , yesod-form >=1.6 && <1.7
+    , yesod-static >=1.6 && <1.7
+    , yesod-websockets
+  if (flag(dev)) || (flag(library-only))
+    ghc-options: -Wall -fwarn-tabs -fno-warn-unused-do-bind -O0
+    cpp-options: -DDEVELOPMENT
+  else
+    ghc-options: -Wall -fwarn-tabs -O2
+  default-language: Haskell2010
+
+executable ioa
+  main-is: main.hs
+  other-modules:
+      DevelMain
+      Paths_ioa
+  hs-source-dirs:
+      app
+  default-extensions: TemplateHaskell QuasiQuotes NoImplicitPrelude
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HaskellNet
+    , HaskellNet-SSL
+    , aeson >=0.6 && <1.5
+    , base >=4.8.2.0 && <4.9 || >=4.9.1.0 && <5
+    , base16-bytestring
+    , blaze-html
+    , bytestring >=0.9 && <0.11
+    , case-insensitive
+    , classy-prelude >=1.4 && <1.6
+    , classy-prelude-conduit >=1.4 && <1.6
+    , classy-prelude-yesod >=1.4 && <1.6
+    , conduit >=1.0 && <2.0
+    , containers
+    , cryptonite
+    , data-default
+    , directory >=1.1 && <1.4
+    , esqueleto
+    , fast-logger >=2.2 && <2.5
+    , file-embed
+    , foreign-store
+    , formatting
+    , hjsmin >=0.1 && <0.3
+    , http-client
+    , http-client-tls
+    , http-conduit >=2.3 && <2.4
+    , ioa
+    , memory
+    , mime-mail
+    , monad-control >=0.3 && <1.1
+    , monad-logger >=0.3 && <0.4
+    , nonce
+    , persistent >=2.8 && <2.10
+    , persistent-postgresql >=2.8 && <2.10
+    , persistent-template >=2.5 && <2.9
+    , safe
+    , shakespeare >=2.0 && <2.1
+    , split
+    , template-haskell
+    , text >=0.11 && <2.0
+    , time
+    , unordered-containers
+    , vector
+    , wai
+    , wai-extra >=3.0 && <3.1
+    , wai-logger >=2.2 && <2.4
+    , warp >=3.0 && <3.3
+    , yaml >=0.8 && <0.12
+    , yesod >=1.6 && <1.7
+    , yesod-auth >=1.6 && <1.7
+    , yesod-core >=1.6 && <1.7
+    , yesod-form >=1.6 && <1.7
+    , yesod-static >=1.6 && <1.7
+    , yesod-websockets
+  if flag(library-only)
+    buildable: False
+  default-language: Haskell2010
+
+test-suite ioa-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Handler.CommonSpec
+      Handler.HomeSpec
+      Handler.ProfileSpec
+      TestImport
+      Paths_ioa
+  hs-source-dirs:
+      test
+  default-extensions: TemplateHaskell QuasiQuotes NoImplicitPrelude
+  ghc-options: -Wall
+  build-depends:
+      HaskellNet
+    , HaskellNet-SSL
+    , aeson >=0.6 && <1.5
+    , base >=4.8.2.0 && <4.9 || >=4.9.1.0 && <5
+    , base16-bytestring
+    , blaze-html
+    , bytestring >=0.9 && <0.11
+    , case-insensitive
+    , classy-prelude >=1.4 && <1.6
+    , classy-prelude-conduit >=1.4 && <1.6
+    , classy-prelude-yesod >=1.4 && <1.6
+    , conduit >=1.0 && <2.0
+    , containers
+    , cryptonite
+    , data-default
+    , directory >=1.1 && <1.4
+    , esqueleto
+    , fast-logger >=2.2 && <2.5
+    , file-embed
+    , foreign-store
+    , formatting
+    , hjsmin >=0.1 && <0.3
+    , hspec >=2.0.0
+    , http-client
+    , http-client-tls
+    , http-conduit >=2.3 && <2.4
+    , ioa
+    , memory
+    , mime-mail
+    , monad-control >=0.3 && <1.1
+    , monad-logger >=0.3 && <0.4
+    , nonce
+    , persistent >=2.8 && <2.10
+    , persistent-postgresql >=2.8 && <2.10
+    , persistent-template >=2.5 && <2.9
+    , safe
+    , shakespeare >=2.0 && <2.1
+    , split
+    , template-haskell
+    , text >=0.11 && <2.0
+    , time
+    , unordered-containers
+    , vector
+    , wai
+    , wai-extra >=3.0 && <3.1
+    , wai-logger >=2.2 && <2.4
+    , warp >=3.0 && <3.3
+    , yaml >=0.8 && <0.12
+    , yesod >=1.6 && <1.7
+    , yesod-auth >=1.6 && <1.7
+    , yesod-core >=1.6 && <1.7
+    , yesod-form >=1.6 && <1.7
+    , yesod-static >=1.6 && <1.7
+    , yesod-test
+    , yesod-websockets
+  default-language: Haskell2010

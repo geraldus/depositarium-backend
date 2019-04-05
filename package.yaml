@@ -1,5 +1,5 @@
-name:    mao
 version: "0.1.1"
+name:    ioa
 
 dependencies:
 
@@ -87,7 +87,7 @@ library:
 
 # Runnable executable for our application
 executables:
-  mao:
+  ioa:
     main: main.hs
     source-dirs: app
     ghc-options:
@@ -95,19 +95,19 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - mao
+    - ioa
     when:
     - condition: flag(library-only)
       buildable: false
 
 # Test suite
 tests:
-  mao-test:
+  ioa-test:
     main: Spec.hs
     source-dirs: test
     ghc-options: -Wall
     dependencies:
-    - mao
+    - ioa
     - hspec >=2.0.0
     - yesod-test
 
