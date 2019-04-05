@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 46ed2e200e5bba029363a36007af36639582528ec7d0167e5fd0857b5b514041
+-- hash: ca9f2ae72edcc770069024066e575e1e9f10ffeedb9437ad259ab352dd51962b
 
 name:           ioa
 version:        0.1.2
@@ -27,6 +27,7 @@ library
       Form.UserData
       Foundation
       Handler.API.Nav
+      Handler.API.User
       Handler.Common
       Handler.Home
       Handler.Manage.Currency.Create
