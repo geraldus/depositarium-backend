@@ -16,4 +16,3 @@
 /manage/currency/list ManageListCurrencyR GET
 /manage/currency/create-temporal ManageCreateCurrencyTemporalR POST
 
-/operator/profile OperatorProfileViewR GET
