@@ -35,7 +35,7 @@ import qualified Yesod.Auth.Util.PasswordStore as PS
 
 
 loginR :: AuthRoute
-loginR = PluginR "PRIZM Yesod Auth Plugin" ["login"]
+loginR = PluginR "Prizm.  JSON based auth plugin for Yesod Framework" ["login"]
 
 class ( YesodAuth site
       , YesodPersist site
@@ -46,7 +46,7 @@ class ( YesodAuth site
 
 prizmJSONAuth :: PrizmJSONAuthPlugin m => AuthPlugin m
 prizmJSONAuth =
-  AuthPlugin "Prizm JSON Auth Plugin for Yesod Framework" dispatch loginWidget
+  AuthPlugin "prizm-json-plugin" dispatch loginWidget
     where
         dispatch "POST" ["login"] = postLoginR >>= sendResponse
         dispatch _ _              = notFound
