@@ -1,12 +1,42 @@
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE KindSignatures    #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes        #-}
 module Utils.Database.UserData where
 
-import           Import.NoFoundation as I
+import           Import.NoFoundation as I hiding ( on, (==.) )
 import           Utils.Common        ( jsonMerge )
 
 import           Data.Aeson          as A
+import           Database.Esqueleto
 
 
+-- getUserMetaData :: UserId -> (Entity User, Maybe (Entity Email), Maybe (Entity UserMeta), [AccessType])
+getUserMetaData ::
+    forall (m :: * -> *) backend.
+    (MonadIO m, BackendCompatible SqlBackend backend,
+    PersistQueryRead backend, PersistUniqueRead backend)
+    => Key User
+    -> ReaderT backend m
+        (Maybe
+            ( Entity User
+            , Maybe (Entity Email)
+            , Maybe (Entity UserMeta)
+            , [Entity UserRights] ))
+getUserMetaData user = do
+    meta <- select . from $ \(u `LeftOuterJoin` e `LeftOuterJoin` m) -> do
+        on (just (u ^. UserId) ==. m ?. UserMetaUser)
+        on (just (u ^. UserId) ==. e ?. EmailUser)
+        where_ (u ^. UserId ==. val user)
+        return (u, e, m)
+    withExistingUser meta $ \(u, e, m) -> do
+        access <- select . from $ \a -> do
+            where_ (a ^. UserRightsUser ==. val user)
+            return a
+        return (u, e, m, access)
+    where
+        withExistingUser [] _         = pure Nothing
+        withExistingUser (m:_) action = Just <$> action m
 
 
 cleanJSONUserData ::
