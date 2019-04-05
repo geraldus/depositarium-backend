@@ -1,5 +1,5 @@
-version: "0.1.1"
 name:    ioa
+version: "0.1.2"
 
 dependencies:
 
