@@ -16,9 +16,7 @@ getManageListUserR = do
             on (just (u ^. UserId) ==. e ?. EmailUser)
             where_ (u ^. UserIdent !=. val "")
             return (u, e, m)
-    selectRep $ do
-        provideRep . defaultLayout $ [whamlet|user-list|]
-        provideRep . return $ object
-            [ "users" .= map (toJSON . clean) list ]
+    selectRep . provideRep . return $ object
+        [ "users" .= map (toJSON . clean) list ]
     where
         clean (u, e, m) = jsonMerge [ cleanUpUser u, cleanUpEmail e, cleanUpMeta m ]
