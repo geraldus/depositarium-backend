@@ -57,5 +57,5 @@ data MenuItemJ = MenuItemJ
         }
 instance ToJSON MenuItemJ where
     toJSON (MenuItemJ l r) = A.object
-        [ "label" .= A.String l
-        , "url"   .= A.String r ]
+        [ "title" .= A.String l
+        , "path"  .= A.String r ]
