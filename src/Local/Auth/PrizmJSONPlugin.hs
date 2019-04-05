@@ -16,6 +16,7 @@ import           Import.NoFoundation
 import qualified Local.Auth.Messages           as PMsg
 import           Utils.Common                  ( errorResponseJ,
                                                  successResponseWithDataJ )
+import           Utils.Database.UserData       ( cleanUpUser )
 
 import           Yesod.Auth                    ( AuthHandler, AuthPlugin (..),
                                                  AuthRoute, Route (..),
@@ -31,7 +32,6 @@ import           Data.Text                     ( Text )
 import qualified Data.Text.Encoding            as TE
 import qualified Yesod.Auth.Util.PasswordStore as PS
 
--- import           Network.HTTP.Types            ( Status )
 
 
 loginR :: AuthRoute
@@ -73,7 +73,7 @@ postLoginR = do
         NoSuchUser -> pure
             ( unauthorized401
             , errorResponseJ . render $ Msg.IdentifierNotFound username )
-    sendResponseStatus status response
+    sendStatusJSON status response
     where
         basicForm = (,)
             <$> ireq textField "username"
