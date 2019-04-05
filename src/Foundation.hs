@@ -450,9 +450,9 @@ appMenuItems user _ = do
 allAccessRights  :: [ AccessType ]
 allAccessRights = [ minBound .. maxBound ]
 
-allAccessRightsJ :: Value
+allAccessRightsJ :: I.Value
 allAccessRightsJ = toJSON $ map
-        (\ar -> let x = txt ar in (AccessRightJ x x x))
+        (\ar -> let x = txt ar in AccessRightJ x x x)
         allAccessRights
 
 -- ** React
