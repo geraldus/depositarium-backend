@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([[2],{QeBL:function(e,n,t){"use strict";t.r(n);var a=t("q1tI"),o=t.n(a),c=t("LLXN"),i=t("EXKy"),r=t.n(i);n["default"]=function(){return o.a.createElement(r.a,null,Object(c["formatMessage"])({id:"pageTitle.home"}))}}}]);
