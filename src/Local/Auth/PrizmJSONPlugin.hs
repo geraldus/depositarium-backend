@@ -79,14 +79,6 @@ postLoginR = do
             <$> ireq textField "username"
             <*> ireq textField "password"
 
-setCredsResponse  ::
-    ( MonadHandler m, YesodAuth (HandlerSite m) ) --, RenderMessage (HandlerSite m) msg )
-    => Entity User
-    -> m Value
-setCredsResponse user = do
-    setSession "_ID" $ toPathPiece (entityKey user)
-    pure . successResponseWithDataJ $ toJSON user
-
 checkCreds ::
     ( PrizmJSONAuthPlugin site)
     => Text -> Text -> AuthHandler site AuthResult'
@@ -97,6 +89,14 @@ checkCreds username password = liftHandler . runDB $ do
         Just email ->
             let userId = emailUser . entityVal $ email
             in  checkUserAuth password . fmap (Entity userId) <$> get userId
+
+setCredsResponse  ::
+    ( MonadHandler m, YesodAuth (HandlerSite m) ) --, RenderMessage (HandlerSite m) msg )
+    => Entity User
+    -> m Value
+setCredsResponse user = do
+    setSession "_ID" $ toPathPiece (entityKey user)
+    pure . successResponseWithDataJ . toJSON $ cleanUpUser user
 
 userAuthResult :: Entity User -> Text -> AuthResult'
 userAuthResult u p
