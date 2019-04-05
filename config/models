@@ -5,7 +5,7 @@ User json
     ident     Text
     password  Text
     UniqueUser ident
-    deriving Show Typeable
+    deriving Show Eq Typeable
 
 Email json
     email   Text
