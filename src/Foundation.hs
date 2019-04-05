@@ -30,7 +30,6 @@ import           Text.Jasmine            ( minifym )
 
 import           Local.Auth
 import           Local.Persist.Access
-import           Type.App
 import           Utils.Common
 
 import qualified Crypto.Nonce            as Nonce
@@ -111,12 +110,7 @@ instance Yesod App where
     defaultLayout widget = do
         master <- getYesod
         user <- maybeAuthPair
-        route <- getCurrentRoute
-        menues <- appMenuItems user route
-        routeRender <- getUrlRender
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
-        idApp <- newIdent
-        (_title, _parents) <- breadcrumbs
         msg <- getMessageRender
         let accessRightsJSON = encodeStrictText allAccessRightsJ
         pc <- widgetToPageContent $ do
@@ -370,82 +364,6 @@ setAppTitle = setCompositeTitle . (:) MsgProjectName
 
 setAppPageTitle :: AppMessage -> Widget
 setAppPageTitle = setAppTitle . (: [])
-
-appMenuItems
-    :: Maybe (UserId, User)
-    -> Maybe (Route App)
-    -> Handler [ MenuGroup App ]
-appMenuItems user _ = do
-    msg <- getMessageRender
-    accessRights <- case user of
-        Nothing     -> pure [ ]
-        Just (u, _) ->
-            map entityVal
-            <$> runDB (selectList [ UserRightsUser P.==. u ] [ ])
-    return $
-        [ SingleItem (itemHome msg)
-        ]
-        <> userItems msg user (plainAccess accessRights)
-  where
-    userItems
-        :: (AppMessage -> Text)
-        -> Maybe (UserId, User)
-        -> [ AccessType ]
-        -> [ MenuGroup App ]
-    userItems msg Nothing _ = guestItems msg
-    userItems msg (Just (_, u)) access =
-        let manageItems = manageUserItems msg access
-            currencyItems = manageCurrencyItems msg access
-            loggedItems = loggedUserItems msg
-            operatorItems = operatorUserItems msg access
-            manage =   [ ItemGroup manageItems (msg MsgManageUserMenuTitle) ]
-            manageCurrency = [ ItemGroup currencyItems (msg MsgManageCurrencyMenuTitle) ]
-            operator = [ ItemGroup operatorItems (msg MsgProfileViewMenuTitle) ]
-            logged =   [ ItemGroup loggedItems (userIdent u) ]
-        in cleanGroup $ manage <> manageCurrency <> operator <> logged
-
-
-    guestItems :: (AppMessage -> Text) -> [ MenuGroup App ]
-    guestItems msg = [ ItemGroup [ itemSignIn msg ] "" ]
-
-    manageUserItems :: (AppMessage -> Text) -> [ AccessType ] -> [ MenuItem App ]
-    manageUserItems msg access =
-        let listUsers = [itemListUsers msg | ListUsers `elem` access]
-            createUser = [itemCreateUser msg | CreateUser `elem` access]
-        in listUsers <> createUser <> [ ]
-
-    manageCurrencyItems :: (AppMessage -> Text) -> [ AccessType ] -> [ MenuItem App ]
-    manageCurrencyItems msg access =
-        let list = [itemListСurrency msg | ListCurrency `elem` access]
-        in list
-
-    operatorUserItems :: (AppMessage -> Text) -> [ AccessType ] -> [ MenuItem App ]
-    operatorUserItems msg access =
-        let viewProfile = [itemOperatorProfileView msg | SelfBalanceView `elem` access]
-        in viewProfile <> [ ]
-
-    loggedUserItems msg = [ itemSignOut msg ]
-
-    itemHome msg = MenuItem (msg MsgHomePageTitle) HomeR
-
-    itemSignIn msg = MenuItem (msg MsgSignInPageTitle) (AuthR LoginR)
-    itemSignOut msg = MenuItem (msg MsgSignOut) (AuthR LogoutR)
-
-    itemListUsers msg = MenuItem (msg MsgListUserPageTitle) ManageListUserR
-    itemCreateUser msg = MenuItem (msg MsgCreateUserPageTitle) ManageCreateUserR
-
-    itemListСurrency msg = MenuItem (msg MsgListCurrencyPageTitle) ManageListCurrencyR
-
-    itemOperatorProfileView msg
-        = MenuItem (msg MsgProfileViewMenuTitle) OperatorProfileViewR
-
-    cleanGroup :: [MenuGroup App] -> [MenuGroup App]
-    cleanGroup gs = reverse $ step [] gs
-        where step acc []                    = acc
-              step acc (ItemGroup [] _:rest) = step acc rest
-              step acc (x:rest)              = step (x:acc) rest
-
-    plainAccess = map userRightsAccess
 
 allAccessRights  :: [ AccessType ]
 allAccessRights = [ minBound .. maxBound ]

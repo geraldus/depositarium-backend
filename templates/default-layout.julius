@@ -1,6 +1,8 @@
 
-((doc) => {
+((win, doc) => {
     let date = new Date()
     doc.cookie = "timezoneOffset=" + date.getTimezoneOffset()
-})(document)
+    win.currentUser = #{rawJS (encodeStrictText userJSON)}
+})(window, document)
+
 
