@@ -40,8 +40,8 @@ encodeStrictText = decodeUtf8 . toStrict . encode
 jsonMerge :: [Value] -> Value
 jsonMerge = Object . HML.unions . map (\(Object x) -> x)
 
-successWithDataResponseJ :: ToJSON a => a -> Value
-successWithDataResponseJ a = object
+successResponseWithDataJ :: ToJSON a => a -> Value
+successResponseWithDataJ a = object
     [ "status"  .= String "ok"
     , "data" .= toJSON a ]
 
@@ -50,13 +50,14 @@ errorResponseJ errorText = object
     [ "status"  .= String "fail"
     , "message" .= toJSON errorText ]
 
-formErrorsResponseJ
-    :: (Functor f, ToJSON a, ToJSON (f Value))
+errorResponseWithDataJ ::
+    Text -> [(Text, Value)] -> Value
+errorResponseWithDataJ errorText =
+    jsonMerge . (:) (errorResponseJ errorText) . (:[]) . object
+
+formErrorsResponseJ ::
+    ( Functor f, ToJSON a, ToJSON (f Value) )
     => Text -> f a -> Value
 formErrorsResponseJ msg errors =
     errorResponseWithDataJ msg [ "form-errors" .= map toJSON errors ]
 
-errorResponseWithDataJ
-    :: Text -> [(Text, Value)] -> Value
-errorResponseWithDataJ errorText =
-    jsonMerge . (:) (errorResponseJ errorText) . (:[]) . object

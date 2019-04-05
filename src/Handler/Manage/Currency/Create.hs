@@ -5,7 +5,7 @@ import           Import
 
 import           Form.Currency      ( currencyDescIForm, currencyIForm )
 import           Utils.App.Common   ( processAppFormJ )
-import           Utils.Common       ( successWithDataResponseJ )
+import           Utils.Common       ( successResponseWithDataJ )
 
 import           Database.Esqueleto
 import qualified Database.Persist   as P
@@ -29,7 +29,7 @@ postManageCreateCurrencyTemporalR = do
                     (\(u, t) -> Wallet (entityKey u) currencyId 0 t)
                     walletsData
             walletIds <- insertMany wallets
-            return . successWithDataResponseJ $
+            return . successResponseWithDataJ $
                 ( Entity currencyId c
                 , Entity descId description
                 , zipWith Entity walletIds wallets )
