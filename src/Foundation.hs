@@ -31,6 +31,7 @@ import           Text.Jasmine            ( minifym )
 import           Local.Auth
 import           Local.Persist.Access
 import           Utils.Common
+import           Utils.Database.UserData ( cleanUpUser )
 
 import qualified Crypto.Nonce            as Nonce
 import           Data.List               ( isSubsequenceOf )
@@ -110,6 +111,12 @@ instance Yesod App where
     defaultLayout widget = do
         master <- getYesod
         user <- maybeAuthPair
+        let userJSON = maybe
+                (object [ "auth" .= toJSON False ])
+                (jsonMerge
+                    . (:) (object [ "auth" .= toJSON True])
+                    . (: []) . (toJSON . cleanUpUser . uncurry Entity))
+                user
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
         msg <- getMessageRender
         let accessRightsJSON = encodeStrictText allAccessRightsJ
