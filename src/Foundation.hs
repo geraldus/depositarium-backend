@@ -277,8 +277,6 @@ instance YesodAuth App where
     renderAuthMessage msg (_:rest) = renderAuthMessage msg rest
     renderAuthMessage _ []         = defaultMessage
 
-    -- authLayout :: Widget -> Handler Html
-
     loginHandler :: AuthHandler App Html
     loginHandler = do
         ma <- maybeAuthId
