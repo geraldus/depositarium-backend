@@ -29,7 +29,7 @@ $newline never
         }
 
     <script>
-        window.publicPath = '/static/js/ioa-ui/'
+        window.publicPath = '/static/js/ui/'
     <script>
       /* The `defaultCsrfMiddleware` Middleware added in Foundation.hs adds a CSRF token to the request cookies. */
       /* AJAX requests should add that token to a header to be validated by the server. */

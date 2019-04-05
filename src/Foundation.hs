@@ -327,5 +327,5 @@ allAccessRightsJ = toJSON $ map
 
 addUiBundle :: Widget
 addUiBundle =  do
-    addStylesheet (StaticR js_ioa_ui_umi_css)
-    addScript (StaticR js_ioa_ui_umi_js)
+    addStylesheet (StaticR js_ui_umi_css)
+    addScript (StaticR js_ui_umi_js)
