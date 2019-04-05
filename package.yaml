@@ -46,6 +46,7 @@ dependencies:
 - formatting
 - HaskellNet
 - HaskellNet-SSL
+- http-types
 - http-client
 - http-client-tls
 - mime-mail

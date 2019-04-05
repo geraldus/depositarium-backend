@@ -135,6 +135,7 @@ instance Yesod App where
     -- Routes not requiring authentication.
     isAuthorized (AuthR _) _             = return Authorized
     isAuthorized HomeR _                 = return Authorized
+    isAuthorized (APIUserMetaDataUnsafeR _) _ = return Authorized
     isAuthorized ManageListUserR _       = authorizeByAccess [ ListUsers, UpdateUser ]
     isAuthorized ManageCreateUserR _     = authorizeByAccess [ CreateUser ]
     isAuthorized (ManageUpdateUserR _) _ = authorizeByAccess [ UpdateUser ]
