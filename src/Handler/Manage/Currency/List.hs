@@ -4,11 +4,9 @@ module Handler.Manage.Currency.List where
 
 import           Import
 
-import           Utils.Common       ( encodeStrictText )
+import           Utils.Common     ( encodeStrictText )
 
-import           Database.Esqueleto
-import qualified Database.Persist   as P
-
+import qualified Database.Persist as P
 
 
 getManageListCurrencyR :: Handler TypedContent
