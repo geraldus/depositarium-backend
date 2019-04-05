@@ -114,8 +114,8 @@ instance Yesod App where
         msg <- getMessageRender
         let accessRightsJSON = encodeStrictText allAccessRightsJ
         pc <- widgetToPageContent $ do
-            addUiBundle
             $(widgetFile "default-layout")
+            addUiBundle
         withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
     -- The page to be redirected to when authentication is required.
