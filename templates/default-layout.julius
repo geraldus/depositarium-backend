@@ -4,5 +4,3 @@
     doc.cookie = "timezoneOffset=" + date.getTimezoneOffset()
     win.currentUser = #{rawJS (encodeStrictText userJSON)}
 })(window, document)
-
-

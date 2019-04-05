@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP                   #-}
 {-# LANGUAGE ExplicitForAll        #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
@@ -109,7 +108,6 @@ instance Yesod App where
 
     defaultLayout :: Widget -> Handler Html
     defaultLayout widget = do
-        master <- getYesod
         user <- maybeAuthPair
         let userJSON = maybe
                 (object [ "auth" .= toJSON False ])
@@ -118,7 +116,6 @@ instance Yesod App where
                     . (: []) . (toJSON . cleanUpUser . uncurry Entity))
                 user
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
-        msg <- getMessageRender
         let accessRightsJSON = encodeStrictText allAccessRightsJ
         pc <- widgetToPageContent $ do
             $(widgetFile "default-layout")
@@ -255,7 +252,6 @@ instance YesodAuth App where
     -- Password check should occur on plugin side.
     -- 'authenticate' should perform one extra DB request (in our case)
     -- and return AuthId without password check.
-
     authenticate :: (MonadHandler m, HandlerSite m ~ App)
                  => Creds App -> m (AuthenticationResult App)
     authenticate Creds{..} = do
@@ -307,57 +303,6 @@ instance HasHttpManager App where
 unsafeHandler :: App -> Handler a -> IO a
 unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 
--- Note: Some functionality previously present in the scaffolding has been
--- moved to documentation in the Wiki. Following are some hopefully helpful
--- links:
---
--- https://github.com/yesodweb/yesod/wiki/Sending-email
--- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
--- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
-
-
-fsAddPlaceholder :: FieldSettings App -> Text -> FieldSettings App
-fsAddPlaceholder settings p = let
-        attrs = fsAttrs settings ++ [("placeholder", p)]
-    in settings { fsAttrs = attrs }
-
-fsAddClasses :: FieldSettings App -> [ Text ] -> FieldSettings App
-fsAddClasses settings cs = let
-        attrs = fsAttrs settings
-        csi = unwords cs
-        attrs' = updateAttrs attrs [] csi
-    in settings { fsAttrs = attrs' }
-    where
-        updateAttrs [] acc classes = acc ++ [ ("class", classes) ]
-        updateAttrs (a@(aname, aval):rest) acc classes
-            | aname == "class" = acc ++ [ ("class", aval <> " " <> classes) ] ++ rest
-            | otherwise = updateAttrs rest (acc ++ [ a ]) classes
-
-fsAddAttrs :: [ ( Text, Text) ] -> FieldSettings App -> FieldSettings App
-fsAddAttrs attrs settings =
-    let as = fsAttrs settings
-    in settings { fsAttrs = as <> attrs }
-
-fsBs4 :: FieldSettings App
-fsBs4 = fsWithClasses [ "form-control" ] "" Nothing Nothing Nothing []
-
-fsBs4WithId :: Text -> FieldSettings App
-fsBs4WithId ident = fsWithClasses
-    [ "form-control" ] "" Nothing (Just ident) Nothing []
-
-fsWithClasses
-    :: [ Text ]
-    -> SomeMessage App
-    -> Maybe (SomeMessage App)
-    -> Maybe Text
-    -> Maybe Text
-    -> [ ( Text, Text ) ]
-    -> FieldSettings App
-fsWithClasses classList lbl tlt mid mnam attrs =
-    let cs = unwords classList
-        as = attrs <> [ ( "class", cs ) ]
-    in FieldSettings lbl tlt mid mnam as
-
 
 appNonce128urlT :: Handler Text
 appNonce128urlT =
@@ -380,10 +325,7 @@ allAccessRightsJ = toJSON $ map
 
 -- ** React
 
-
-
 addUiBundle :: Widget
 addUiBundle =  do
     addStylesheet (StaticR js_ioa_ui_umi_css)
     addScript (StaticR js_ioa_ui_umi_js)
-
