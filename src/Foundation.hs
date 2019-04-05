@@ -304,6 +304,8 @@ unsafeHandler :: App -> Handler a -> IO a
 unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 
 
+-- * Miscellaneous utilities
+
 appNonce128urlT :: Handler Text
 appNonce128urlT =
     (appNonceGen <$> getYesod)
@@ -315,6 +317,9 @@ setAppTitle = setCompositeTitle . (:) MsgProjectName
 setAppPageTitle :: AppMessage -> Widget
 setAppPageTitle = setAppTitle . (: [])
 
+
+-- * JSON
+
 allAccessRights  :: [ AccessType ]
 allAccessRights = [ minBound .. maxBound ]
 
@@ -323,7 +328,7 @@ allAccessRightsJ = toJSON $ map
         (\ar -> let x = txt ar in AccessRightJ x x x)
         allAccessRights
 
--- ** React
+-- * React
 
 addUiBundle :: Widget
 addUiBundle =  do
