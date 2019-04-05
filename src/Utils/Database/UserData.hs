@@ -2,9 +2,24 @@
 module Utils.Database.UserData where
 
 import           Import.NoFoundation as I
+import           Utils.Common        ( jsonMerge )
 
 import           Data.Aeson          as A
 
+
+
+
+cleanJSONUserData ::
+       Entity User
+    -> Maybe (Entity Email)
+    -> Maybe (Entity UserMeta)
+    -> [Entity UserRights]
+    -> A.Value
+cleanJSONUserData u e m rs = jsonMerge
+        [ cleanUpUser u
+        , cleanUpEmail e
+        , cleanUpMeta m
+        , object [ "accessRights" .= cleanUpRights rs ] ]
 
 cleanUpUser :: Entity User -> A.Value
 cleanUpUser (Entity idx v) = object
