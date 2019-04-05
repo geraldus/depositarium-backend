@@ -4,6 +4,7 @@ TermsOfUseTitle: Правила пользования сервисом
 
 # ACCESS
 
+JSONApiOnly: Используйте JSON API
 WrongRequest: Неверный запрос
 PleaseLogInText: Пожалуйста, войдите в систему для просмотра этой страницы
 AccessDenied: Доступ запрещён
