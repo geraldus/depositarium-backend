@@ -375,26 +375,10 @@ allAccessRightsJ = toJSON $ map
 
 -- ** React
 
-addReactScripts :: Widget
-addReactScripts = do
-    addScriptRemote $
-        pkgHost "react" <> "." <> reactBuild <> ".js"
-    addScriptRemote $
-        pkgHost "react-dom" <> "." <> reactBuild <> ".js"
-  where pkgHost pkg = "https://unpkg.com/" <> pkg <> "@16/umd/" <> pkg
 
-addReactBundle :: Widget
-addReactBundle =  addScriptAttrs (StaticR js_bundle_js) []
 
 addUiBundle :: Widget
 addUiBundle =  do
     addStylesheet (StaticR js_ioa_ui_umi_css)
     addScript (StaticR js_ioa_ui_umi_js)
 
-reactBuild :: Text
-reactBuild =
-#ifdef DEVELOPMENT
-    "development"
-#else
-    "production.min"
-#endif

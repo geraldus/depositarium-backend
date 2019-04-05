@@ -11,8 +11,6 @@ import           Import
 
 getHomeR :: Handler Html
 getHomeR = defaultLayout $ do
-    addReactScripts
     setAppPageTitle MsgHomePageTitle
-    addReactBundle
     $(widgetFile "pages/home")
 
