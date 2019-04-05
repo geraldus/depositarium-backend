@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5810b499e51157332fe10c9bbd38dfd0319695ccb23a8edd62fd90607f1854bb
+-- hash: 46ed2e200e5bba029363a36007af36639582528ec7d0167e5fd0857b5b514041
 
 name:           ioa
 version:        0.1.2
