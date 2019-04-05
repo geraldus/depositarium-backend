@@ -1,22 +1,8 @@
-<div ##{idApp}>
-<div ##{idApp}-fallback>
+<div #root>
     ^{widget}
 
 <style>
     :root {
         --ck-z-default: 100;
         --ck-z-modal: calc( var(--ck-z-default) + 999 );
-    }
-<script>
-    const f = document.querySelector('##{idApp}-fallback')
-    if (typeof NO_REACT != typeof undefined && NO_REACT === true) {
-        console.log(typeof NO_REACT != typeof undefined)
-        console.warn('ReactJS DISABLED. Falling back')
-    } else {
-        console.log('ReactJS enabled.  Removing fallback')
-        console.groupCollapsed('Fallback Details')
-        console.log(f)
-        console.groupEnd()
-        f.remove()
-
     }

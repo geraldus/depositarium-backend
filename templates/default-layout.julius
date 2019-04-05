@@ -1,55 +1,6 @@
 
-var _date = new Date()
-document.cookie = "timezoneOffset=" + _date.getTimezoneOffset()
+((doc) => {
+    let date = new Date()
+    doc.cookie = "timezoneOffset=" + date.getTimezoneOffset()
+})(document)
 
-const appRoot = document.querySelector(#{"#" <> idApp})
-ReactDOM.render(
-    React.createElement( _ui.app, {
-        nav: {
-            items: #{rawEncodeMap (menuGroupJson routeRender) menues},
-            routes: [
-                {
-                    path: '@{HomeR}',
-                    exact: true,
-                    props: {
-                        labels: {
-                            title: "#{rawJS (msg MsgHomePageTitle)}"
-                        }
-                    },
-                    component: _ui.homePage
-                },
-                {
-                    path: '@{ManageListUserR}',
-                    exact: true,
-                    component: _ui.manageListUser,
-                    props: {
-                        labels: {
-                            title: "#{rawJS (msg MsgListUserPageTitle)}"
-                        },
-                        apiUrl: '@?{(ManageListUserR, [("_accept", "application/json")])}'
-                    },
-                },
-                {
-                    path: '@{ManageCreateUserR}',
-                    exact: true,
-                    component: _ui.manageCreateUser,
-                    props: {
-                        apiUrl: '@?{(ManageCreateUserR, [("_accept", "application/json")])}',
-                        accessRights: #{rawJS accessRightsJSON}
-                    },
-                },
-                {
-                    path: '@{OperatorProfileViewR}',
-                    exact: true,
-                    component: _ui.operatorProfileView,
-                    props: {
-                        apiGetBalancesUrl: '',
-                        depositCreateUrl: '',
-                        withdrawalCreateUrl: ''
-                    },
-                }
-            ]
-        }
-    }, null),
-    appRoot
-)

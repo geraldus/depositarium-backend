@@ -120,8 +120,7 @@ instance Yesod App where
         msg <- getMessageRender
         let accessRightsJSON = encodeStrictText allAccessRightsJ
         pc <- widgetToPageContent $ do
-            addReactScripts
-            addReactBundle
+            addUiBundle
             $(widgetFile "default-layout")
         withUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
@@ -468,6 +467,11 @@ addReactScripts = do
 
 addReactBundle :: Widget
 addReactBundle =  addScriptAttrs (StaticR js_bundle_js) []
+
+addUiBundle :: Widget
+addUiBundle =  do
+    addStylesheet (StaticR js_ioa_ui_umi_css)
+    addScript (StaticR js_ioa_ui_umi_js)
 
 reactBuild :: Text
 reactBuild =
