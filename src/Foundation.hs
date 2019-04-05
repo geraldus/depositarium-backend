@@ -14,7 +14,7 @@
 {-# LANGUAGE ViewPatterns          #-}
 module Foundation where
 
-import           Import.NoFoundation
+import           Import.NoFoundation     as I hiding ( on, (==.), (||.) )
 import           Yesod.Auth.Message
 import           Yesod.Core.Types        ( Logger )
 import qualified Yesod.Core.Unsafe       as Unsafe
@@ -35,7 +35,8 @@ import           Utils.Common
 
 import qualified Crypto.Nonce            as Nonce
 import           Data.List               ( isSubsequenceOf )
-import qualified Database.Esqueleto      as E
+import           Database.Esqueleto
+import qualified Database.Persist        as P ( (==.) )
 import           Text.Julius             ( RawJS (..) )
 
 -- data AppChannels = AppChannels
@@ -197,7 +198,7 @@ authorizeByAccess ats = do
                 else unauthorizedI MsgAccessDenied
     where
             getUserRights user = runDB $
-                selectList [ UserRightsUser ==. user ] []
+                selectList [ UserRightsUser P.==. user ] []
 
 
 -- Define breadcrumbs.
@@ -231,7 +232,7 @@ instance YesodPersistRunner App where
     getDBRunner :: Handler (DBRunner App, Handler ())
     getDBRunner = defaultGetDBRunner appConnPool
 
-instance PrizmAuthPlugin App
+instance PrizmJSONAuthPlugin App
 
 instance YesodAuth App where
     type AuthId App = UserId
@@ -244,65 +245,46 @@ instance YesodAuth App where
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer :: App -> Bool
     redirectToReferer _ = False
-    --
+
+    -- According to Yesod.Auth documentation for 'setCreds':
+    -- @@@
+    -- Sets user credentials for the session after checking them
+    -- with authentication backends.
+    -- @@@
+    -- Plugin gives us textual identifier.
+    -- Password check should occur on plugin side.
+    -- 'authenticate' should perform one extra DB request (in our case)
+    -- and return AuthId without password check.
+
     authenticate :: (MonadHandler m, HandlerSite m ~ App)
                  => Creds App -> m (AuthenticationResult App)
-    authenticate Creds{..} = case credsPlugin of
-        "PRIZM Yesod Auth Plugin" -> do
-            entity <- liftHandler . runDB $ E.select . E.from $
-                \(u `E.LeftOuterJoin` e) -> do
-                    E.on (E.just (u E.^. UserId) E.==. (e E.?. EmailUser))
-                    E.where_
-                        (       u E.^. UserIdent E.==. E.val credsIdent
-                          E.||. e E.?. EmailEmail E.==. E.just (E.val credsIdent) )
-                    return u
-            return $ case entity of
-                (Entity uid _:_) -> Authenticated uid
-                []               -> UserError InvalidLogin
-        -- FIXME: Provide better error when plugin name not recognized
-        _ -> return $ UserError InvalidLogin
+    authenticate Creds{..} = do
+        entity <- liftHandler . runDB $ select . from $
+            \(u `LeftOuterJoin` e) -> do
+                on (just (u ^. UserId) ==. (e ?. EmailUser))
+                where_ ( u ^. UserIdent ==. val credsIdent )
+                return u
+        -- Password check is handled by auth plugin already
+        return $ case entity of
+            (Entity uid _:_) -> Authenticated uid
+            []               -> UserError InvalidLogin
 
     -- You can add other plugins like Google Email, email or OAuth here
     authPlugins :: App -> [AuthPlugin App]
-    authPlugins _ = [authPrizm]
+    authPlugins _ = [prizmJSONAuth]
 
     renderAuthMessage _ ("ru":_)   = russianMessage
     renderAuthMessage msg (_:rest) = renderAuthMessage msg rest
     renderAuthMessage _ []         = defaultMessage
 
     -- authLayout :: Widget -> Handler Html
-    authLayout widget =
-        liftHandler . defaultLayout $ do
-            msg <- liftHandler getMessage
-            [whamlet|
-                $maybe m <- msg
-                    <div .alert>#{m}
-                <script>const NO_REACT = true|]
-            widget
 
     loginHandler :: AuthHandler App Html
     loginHandler = do
         ma <- maybeAuthId
-        tp <- getRouteToParent
         when (isJust ma) (redirect HomeR)
-        authLayout $ do
-            setAppPageTitle MsgSignInPageTitle
-            [whamlet|
-                <div .container>
-                    <div .row .justify-content-center>
-                        <div .col-11 .col-md-6>
-                            <form pb-5 action=@{tp Local.Auth.loginR} method=post>
-                                <h2 .text-center>_{MsgSignInPageTitle}
-                                <div .form-group>
-                                    <label for="email-in">_{MsgEmailAddress}
-                                    <input type=text .form-control #email-in placeholder="email@domain.com" name="username">
-                                <div .form-group>
-                                    <label for="pass-in">_{MsgPassword}
-                                    <input type=password .form-control #pass-in placeholder="******" name="password">
-                                <div .form-group .row>
-                                    <div .col .col-sm-9 col-md-6 .mx-auto>
-                                        <button .btn.btn-lg.btn-block.btn-outline-primary type=submit>войти
-                |]
+        authLayout [whamlet|_{MsgJSONApiOnly}|]
+
 instance YesodAuthPersist App where
     type AuthEntity App = User
     getAuthEntity uid = liftHandler . runDB $ get uid
@@ -400,7 +382,7 @@ appMenuItems user _ = do
         Nothing     -> pure [ ]
         Just (u, _) ->
             map entityVal
-            <$> runDB (selectList [ UserRightsUser ==. u ] [ ])
+            <$> runDB (selectList [ UserRightsUser P.==. u ] [ ])
     return $
         [ SingleItem (itemHome msg)
         ]
