@@ -1,15 +1,38 @@
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE GADTs            #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE GADTs             #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Handler.API.User where
 
 import           Import
 
 import           Local.Persist.Access    ( AccessType (..) )
-import           Utils.Common            ( errorResponseJ )
-import           Utils.Database.UserData ( cleanJSONUserData, getUserMetaData )
+import           Utils.Common            ( errorResponseJ, jsonMerge )
+import           Utils.Database.UserData ( cleanJSONUserData, cleanUpUser,
+                                           getUserMetaData )
 
 import           Network.HTTP.Types      ( status200, unauthorized401 )
 
+
+-- | Return shallow authenticated user information
+postAPIAuthInfoR :: Handler TypedContent
+postAPIAuthInfoR = do
+    msg <- getMessageRender >>= \x -> pure $ x MsgNotAuthenticated
+    auth <- maybeAuth
+    cleaned <- case auth of
+        Nothing -> pure $ guestUser msg
+        Just (Entity u _) -> do
+            meta <- runDB $ getUserMetaData u
+            case meta of
+                Nothing -> pure $ guestUser msg
+                Just (u, e, m, rs) ->  pure $ jsonMerge
+                    [ cleanJSONUserData u e m rs
+                    , object [ "auth" .= toJSON True ] ]
+    sendJSON cleaned
+    where
+        guestUser msg = object
+            [ "message" .= msg
+            , "auth" .= toJSON False
+            , "rights" .= array ([] :: [Text]) ]
 
 -- | Return user metadata.  Intended to be used without
 -- authorization check.  Returns data when:
@@ -50,3 +73,4 @@ postAPIUserMetaDataUnsafeR user = do
 
         vals = map entityVal
 
+sendJSON = sendStatusJSON status200

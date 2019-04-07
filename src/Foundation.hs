@@ -136,6 +136,7 @@ instance Yesod App where
     isAuthorized (AuthR _) _             = return Authorized
     isAuthorized HomeR _                 = return Authorized
     isAuthorized (APIUserMetaDataUnsafeR _) _ = return Authorized
+    isAuthorized APIAuthInfoR _ = return Authorized
     isAuthorized ManageListUserR _       = authorizeByAccess [ ListUsers, UpdateUser ]
     isAuthorized ManageCreateUserR _     = authorizeByAccess [ CreateUser ]
     isAuthorized (ManageUpdateUserR _) _ = authorizeByAccess [ UpdateUser ]
@@ -279,6 +280,10 @@ instance YesodAuth App where
         ma <- maybeAuthId
         when (isJust ma) (redirect HomeR)
         authLayout [whamlet|_{MsgJSONApiOnly}|]
+
+    -- redirectToReferer _ = False
+
+    redirectToCurrent _ = False
 
 instance YesodAuthPersist App where
     type AuthEntity App = User

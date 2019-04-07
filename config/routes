@@ -10,6 +10,7 @@
 / HomeR GET
 
 /api/user/read/#UserId APIUserMetaDataUnsafeR POST
+/api/user/info APIAuthInfoR POST
 
 /manage/users/ ManageListUserR GET
 /manage/users/create ManageCreateUserR GET POST
