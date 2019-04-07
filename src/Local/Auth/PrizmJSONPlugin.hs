@@ -1,4 +1,3 @@
-{-# LANGUAGE DatatypeContexts  #-}
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
