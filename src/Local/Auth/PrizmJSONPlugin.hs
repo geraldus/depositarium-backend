@@ -51,12 +51,18 @@ prizmJSONAuth :: PrizmJSONAuthPlugin m => AuthPlugin m
 prizmJSONAuth =
   AuthPlugin "prizm-json-plugin" dispatch loginWidget
     where
-        dispatch "POST" ["login"] = postLoginR >>= sendResponse
-        dispatch _ _              = notFound
+        dispatch "POST" ["login"]  = postLoginR
+        dispatch "POST" ["logout"] = postLogoutR
+        dispatch _ _               = notFound
 
         loginWidget _ = getMessageRender >>= \r ->
                 [whamlet|#{r PMsg.ErrorJSONOnlyAPI}|]
 
+postLogoutR :: (PrizmJSONAuthPlugin site)=> AuthHandler site TypedContent
+postLogoutR = do
+    deleteSession "_ID"
+    render <- liftHandler getMessageRender
+    sendStatusJSON status200 $ successResponseWithDataJ $ render PMsg.SignOutSuccess
 
 postLoginR :: (PrizmJSONAuthPlugin site) => AuthHandler site TypedContent
 postLoginR = do
