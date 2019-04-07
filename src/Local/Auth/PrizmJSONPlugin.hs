@@ -1,3 +1,4 @@
+{-# LANGUAGE DatatypeContexts  #-}
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -16,7 +17,8 @@ import           Import.NoFoundation
 import qualified Local.Auth.Messages           as PMsg
 import           Utils.Common                  ( errorResponseJ,
                                                  successResponseWithDataJ )
-import           Utils.Database.UserData       ( cleanUpUser )
+import           Utils.Database.UserData       ( UserMetas, cleanJSONUserData,
+                                                 getUserMetaDataEither )
 
 import           Yesod.Auth                    ( AuthHandler, AuthPlugin (..),
                                                  AuthRoute, Route (..),
@@ -39,6 +41,7 @@ loginR = PluginR "Prizm.  JSON based auth plugin for Yesod Framework" ["login"]
 
 class ( YesodAuth site
       , YesodPersist site
+      , BackendCompatible SqlBackend (YesodPersistBackend site)
       , BaseBackend (YesodPersistBackend site) ~ SqlBackend
       , PersistQueryRead (YesodPersistBackend site)
       , PersistUniqueRead (YesodPersistBackend site) )
@@ -55,8 +58,7 @@ prizmJSONAuth =
                 [whamlet|#{r PMsg.ErrorJSONOnlyAPI}|]
 
 
-postLoginR :: (PrizmJSONAuthPlugin site)
-           => AuthHandler site TypedContent
+postLoginR :: (PrizmJSONAuthPlugin site) => AuthHandler site TypedContent
 postLoginR = do
     (username, password) <- runInputPost basicForm
     authRes <- checkCreds username password
@@ -65,8 +67,8 @@ postLoginR = do
         -- In our case no need to run 'authenticate', e.g.
         -- @authenticate (Creds "prizm-json" (userIdent . entityVal $ u)  [])@
         -- because we have an AuthId (all required DB data) at hands already.
-        AuthSuccess u ->
-            (,) status200 <$> setCredsResponse u
+        AuthSuccess metas ->
+            (,) status200 <$> setCredsResponse metas
         InvalidAuthPair -> pure
             ( unauthorized401
             , errorResponseJ $ render Msg.InvalidUsernamePass )
@@ -80,45 +82,27 @@ postLoginR = do
             <*> ireq textField "password"
 
 checkCreds ::
-    ( PrizmJSONAuthPlugin site)
-    => Text -> Text -> AuthHandler site AuthResult'
+    ( PrizmJSONAuthPlugin site )
+    => Text -> Text -> AuthHandler site (AuthResultJSON UserMetas)
 checkCreds username password = liftHandler . runDB $ do
-    mayEmail <- getBy $ UniqueEmail username
-    case mayEmail of
-        Nothing   -> checkRootAuth username password
-        Just email ->
-            let userId = emailUser . entityVal $ email
-            in  checkUserAuth password . fmap (Entity userId) <$> get userId
+    metas <- getUserMetaDataEither (Right username)
+    pure $ case metas of
+        Nothing -> NoSuchUser -- checkRootAuth username password
+        Just m  -> userAuthResult m password
 
-setCredsResponse  ::
-    ( MonadHandler m, YesodAuth (HandlerSite m) ) --, RenderMessage (HandlerSite m) msg )
-    => Entity User
-    -> m Value
-setCredsResponse user = do
-    setSession "_ID" $ toPathPiece (entityKey user)
-    pure . successResponseWithDataJ . toJSON $ cleanUpUser user
-
-userAuthResult :: Entity User -> Text -> AuthResult'
-userAuthResult u p
-    | isValidPass p (userPassword . entityVal $ u) = AuthSuccess u
+userAuthResult :: UserMetas -> Text -> AuthResultJSON UserMetas
+userAuthResult metas @ (Entity _ u, _, _, _) p
+    | isValidPass p (userPassword u) = AuthSuccess metas
     | otherwise = InvalidAuthPair
 
-checkUserAuth :: Text -> Maybe (Entity User) -> AuthResult'
-checkUserAuth _ Nothing  = NoSuchUser
-checkUserAuth p (Just u) = userAuthResult u p
-
-checkRootAuth ::
-    ( MonadIO m , PersistQueryRead backend, BaseBackend backend ~ SqlBackend )
-    => Text -> Text -> ReaderT backend m AuthResult'
-checkRootAuth u p
-    | u == "root" = do
-        cnt <- count ([] :: [Filter User])
-        if cnt == 1
-            then checkUserAuth p
-                    <$> selectFirst [ UserIdent ==. u ] [ ]
-            else pure InvalidAuthPair
-    | otherwise = pure InvalidAuthPair
-
+setCredsResponse  ::
+    ( MonadHandler m, YesodAuth (HandlerSite m) )
+    => UserMetas
+    -> m Value
+setCredsResponse metas = do
+    let (user, e, m, rs) = metas
+    setSession "_ID" $ toPathPiece (entityKey user)
+    pure . successResponseWithDataJ $ cleanJSONUserData user e m rs
 
 saltPass' :: String -> String -> String
 saltPass' salt pass = salt ++ unpack (TE.decodeUtf8 $ B16.encode $ convert
@@ -143,8 +127,8 @@ isValidPass' clear' salted' =
 
 type SaltedPass = Text
 
-data AuthResult'
-    = AuthSuccess (Entity User)
+data ToJSON a => AuthResultJSON a
+    = AuthSuccess a
     | NoSuchUser
     | InvalidAuthPair
     deriving Eq
