@@ -7,6 +7,7 @@ TermsOfUseTitle: Правила пользования сервисом
 JSONApiOnly: Используйте JSON API
 WrongRequest: Неверный запрос
 PleaseLogInText: Пожалуйста, войдите в систему для просмотра этой страницы
+NotAuthenticated: Вход не выполнен
 AccessDenied: Доступ запрещён
 FormFailureErrorText: Форма содержит ошибки
 NotFoundErrorText: Запрашиваемые данные не найдены
