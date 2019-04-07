@@ -55,7 +55,6 @@ import           Handler.Manage.Currency.List
 import           Handler.Manage.User.Create
 import           Handler.Manage.User.List
 import           Handler.Manage.User.Update
-import           Handler.Operator.Profile.View
 
 import           Utils.Database.Password              ( saltPass )
 
@@ -139,7 +138,7 @@ checkCreateRoot = runSqlPool $ do
     when (userCount == 0) $ do
         salted <- liftIO $ saltPass "root"
         u <- insert $ User "root" salted
-        mapM (insert . UserRights u) [minBound .. maxBound]
+        _ <- mapM (insert . UserRights u) [minBound .. maxBound]
         return ()
 
 -- | Warp settings for the given foundation value.

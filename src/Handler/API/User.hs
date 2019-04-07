@@ -7,8 +7,7 @@ import           Import
 
 import           Local.Persist.Access    ( AccessType (..) )
 import           Utils.Common            ( errorResponseJ, jsonMerge )
-import           Utils.Database.UserData ( cleanJSONUserData, cleanUpUser,
-                                           getUserMetaData )
+import           Utils.Database.UserData ( cleanJSONUserData, getUserMetaData )
 
 import           Network.HTTP.Types      ( status200, unauthorized401 )
 
@@ -20,8 +19,8 @@ postAPIAuthInfoR = do
     auth <- maybeAuth
     cleaned <- case auth of
         Nothing -> pure $ guestUser msg
-        Just (Entity u _) -> do
-            meta <- runDB $ getUserMetaData u
+        Just (Entity idx _) -> do
+            meta <- runDB $ getUserMetaData idx
             case meta of
                 Nothing -> pure $ guestUser msg
                 Just (u, e, m, rs) ->  pure $ jsonMerge
@@ -73,4 +72,5 @@ postAPIUserMetaDataUnsafeR user = do
 
         vals = map entityVal
 
+sendJSON :: Value -> HandlerFor App a
 sendJSON = sendStatusJSON status200
