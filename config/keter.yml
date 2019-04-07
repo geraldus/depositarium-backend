@@ -26,15 +26,17 @@ stanzas:
       # to. The primary hostname will be used for generating your application
       # root.
       - ioa.outb.info
+      - mao-prizm.com
       # - 185.53.169.5
       - www.ioa.outb.info
+      - www.mao-prizm.com
 
     # Enable to force Keter to redirect to https
     # Can be added to any stanza
     requires-secure: true
     ssl:
-      key: /opt/keter/etc/cert/outb.info.key
-      certificate: /opt/keter/etc/cert/outb.info.pem
+      key: /opt/keter/etc/cert/pub.key
+      certificate: /opt/keter/etc/cert/pub.pem
 
   # Static files.
   # - type: static-files
@@ -53,6 +55,14 @@ stanzas:
       - host: ioa.outb.info
         secure: true
         port: 443
+  - type: redirect
+    hosts:
+      - www.mao-prizm.com
+    actions:
+      - host: mao-prizm.com
+        secure: true
+        port: 443
+
 
     # Uncomment to switch to a non-permanent redirect.
     # status: 303
