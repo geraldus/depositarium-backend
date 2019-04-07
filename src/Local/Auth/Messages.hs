@@ -10,6 +10,7 @@ data LocalAuthMessage
     = SignInTitle
     | ErrorJSONOnlyAPI
     | SignInSuccess
+    | SignOutSuccess
     deriving (Show)
 
 defaultMessage :: LocalAuthMessage -> Text
@@ -19,6 +20,7 @@ russianMessage :: LocalAuthMessage -> Text
 russianMessage SignInTitle      = "Вход"
 russianMessage ErrorJSONOnlyAPI = "Этот способ входа работает только через JSON API"
 russianMessage SignInSuccess    = "Вход выполнен"
+russianMessage SignOutSuccess    = "Выход выполнен"
 
 
 instance RenderMessage master LocalAuthMessage where
