@@ -26,15 +26,15 @@ stanzas:
       # to. The primary hostname will be used for generating your application
       # root.
       - ioa.outb.info
-      - mao-prizm.com
-      # - 185.53.169.5
-      - 104.24.104.227
       - www.ioa.outb.info
+      - 185.53.169.5
+      - mao-prizm.com
       - www.mao-prizm.com
+      - 104.24.104.227
 
     # Enable to force Keter to redirect to https
     # Can be added to any stanza
-    requires-secure: false
+    requires-secure: true
     ssl:
       key: /opt/keter/etc/cert/pub.key
       certificate: /opt/keter/etc/cert/pub.pem
