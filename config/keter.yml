@@ -62,7 +62,7 @@ stanzas:
     actions:
       - host: mao-prizm.com
         secure: true
-        port: 443
+        port: 80
 
 
     # Uncomment to switch to a non-permanent redirect.
