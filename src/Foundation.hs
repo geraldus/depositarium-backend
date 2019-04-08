@@ -1,4 +1,3 @@
-{-# LANGUAGE ExplicitForAll        #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE InstanceSigs          #-}
@@ -116,7 +115,7 @@ instance Yesod App where
                     . (: []) . (toJSON . cleanUpUser . uncurry Entity))
                 user
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
-        let accessRightsJSON = encodeStrictText allAccessRightsJ
+        -- let accessRightsJSON = encodeStrictText allAccessRightsJ
         pc <- widgetToPageContent $ do
             $(widgetFile "default-layout")
             addUiBundle
