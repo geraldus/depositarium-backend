@@ -40,18 +40,21 @@ getUserMetaDataEither ::
     , PersistQueryRead backend
     , PersistUniqueRead backend)
     => Either (Key User) Text -> ReaderT backend m (Maybe UserMetas)
-getUserMetaDataEither user = do
-    let whereCondition u e = case user of
-            Left userId -> u ^. UserId ==. val userId
-            Right userIdent ->
-                u ^. UserIdent ==. val userIdent
-                ||. e ?. EmailEmail ==. just (val userIdent)
-    meta <- select . from $ \(u `LeftOuterJoin` e `LeftOuterJoin` m) -> do
-        on (just (u ^. UserId) ==. m ?. UserMetaUser)
-        on (just (u ^. UserId) ==. e ?. EmailUser)
-        where_ (whereCondition u e)
-        return (u, e, m)
-    withExistingUser meta $ \(u, e, m) -> do
+
+selectFilterUserMetas ::
+    ( MonadIO m
+    , BackendCompatible SqlBackend backend
+    , PersistQueryRead backend
+    , PersistUniqueRead backend)
+    => ( SqlExpr (Entity User)
+            -> SqlExpr (MaybeEntity Email)
+            -> SqlExpr (MaybeEntity UserMeta)
+            -> SqlExpr (Database.Esqueleto.Value Bool)
+            )
+    -> ReaderT backend m [ UserMetas ]
+selectFilterUserMetas applyPartialWhere = do
+    meta <- selectPartialMetas applyPartialWhere
+    forM meta $ \(u, e, m) -> do
         access <- select . from $ \a -> do
             where_ (a ^. UserRightsUser ==. val (entityKey u))
             return a
