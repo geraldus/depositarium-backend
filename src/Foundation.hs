@@ -189,19 +189,17 @@ instance Yesod App where
 
 
 -- | Authorizes only users having ALL specified access rights
-authorizeByAccess :: [ AccessType ] -> Handler AuthResult
+authorizeByAccess :: [AccessType] -> Handler AuthResult
 authorizeByAccess ats = do
     user <- maybeAuth
     case user of
-        Nothing -> unauthorizedI MsgPleaseLogInText
+    Nothing               -> unauthorizedI MsgPleaseLogInText
         Just (Entity ident _) -> do
             accessRights <- map (userRightsAccess . entityVal) <$> getUserRights ident
             if isSubsequenceOf (sort ats) (sort accessRights)
                 then pure Authorized
                 else unauthorizedI MsgAccessDenied
-    where
-            getUserRights user = runDB $
-                selectList [ UserRightsUser P.==. user ] []
+  where getUserRights user = runDB $ selectList [UserRightsUser P.==. user] []
 
 
 -- Define breadcrumbs.
@@ -317,11 +315,9 @@ unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
 -- * Miscellaneous utilities
 
 appNonce128urlT :: Handler Text
-appNonce128urlT =
-    (appNonceGen <$> getYesod)
-    >>= liftIO . Nonce.nonce128urlT
+appNonce128urlT = (appNonceGen <$> getYesod) >>= liftIO . Nonce.nonce128urlT
 
-setAppTitle :: [ AppMessage ] -> Widget
+setAppTitle :: [AppMessage] -> Widget
 setAppTitle = setCompositeTitle . (:) MsgProjectName
 
 setAppPageTitle :: AppMessage -> Widget
@@ -330,8 +326,8 @@ setAppPageTitle = setAppTitle . (: [])
 
 -- * JSON
 
-allAccessRights  :: [ AccessType ]
-allAccessRights = [ minBound .. maxBound ]
+allAccessRights :: [AccessType]
+allAccessRights = [minBound .. maxBound]
 
 allAccessRightsJ :: I.Value
 allAccessRightsJ =
