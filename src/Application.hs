@@ -138,7 +138,7 @@ checkCreateRoot = runSqlPool $ do
     when (userCount == 0) $ do
         salted <- liftIO $ saltPass "root"
         u <- insert $ User "root" salted
-        _ <- mapM (insert . UserRights u) [minBound .. maxBound]
+        insertMany_  $ map (UserRights u) [minBound .. maxBound]
         return ()
 
 -- | Warp settings for the given foundation value.
