@@ -131,12 +131,17 @@ instance Yesod App where
         :: Route App  -- ^ The route the user is visiting.
         -> Bool       -- ^ Whether or not this is a "write" request.
         -> Handler AuthResult
+
     -- Routes not requiring authentication.
     isAuthorized (AuthR _) _             = return Authorized
     isAuthorized HomeR _                 = return Authorized
-    isAuthorized (APIUserMetaDataUnsafeR _) _ = return Authorized
-    isAuthorized APIAuthInfoR _ = return Authorized
-    isAuthorized ManageListUserR _       = authorizeByAccess [ ListUsers, UpdateUser ]
+    isAuthorized (APIUserMetaDataUnsafeR _) _ =
+            return Authorized
+    isAuthorized APIAuthInfoR _          = return Authorized
+    isAuthorized APIUserListAllR _ =
+            authorizeByAccess [ ListUsers, CreateUser, UpdateUser ]
+    isAuthorized ManageListUserR _       =
+            authorizeByAccess [ ListUsers, UpdateUser ]
     isAuthorized ManageCreateUserR _     = authorizeByAccess [ CreateUser ]
     isAuthorized (ManageUpdateUserR _) _ = authorizeByAccess [ UpdateUser ]
     isAuthorized ManageListCurrencyR _ = authorizeByAccess [ ListCurrency ]
