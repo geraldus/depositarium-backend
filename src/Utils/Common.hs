@@ -61,3 +61,8 @@ formErrorsResponseJ ::
 formErrorsResponseJ msg errors =
     errorResponseWithDataJ msg [ "form-errors" .= map toJSON errors ]
 
+sendJSON :: ToTypedContent a => Value -> HandlerFor m a
+sendJSON = sendStatusJSON status200
+
+send404JSON :: ToTypedContent a => Value -> HandlerFor m a
+send404JSON = sendStatusJSON notFound404
