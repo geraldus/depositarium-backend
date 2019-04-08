@@ -61,7 +61,9 @@ postLogoutR :: (PrizmJSONAuthPlugin site)=> AuthHandler site TypedContent
 postLogoutR = do
     deleteSession "_ID"
     render <- liftHandler getMessageRender
-    sendStatusJSON status200 $ successResponseWithDataJ $ render PMsg.SignOutSuccess
+    sendStatusJSON status200 $ successResponseWithDataJ $ object
+        [ "auth" .= toJSON False
+        , "message" .= render PMsg.SignOutSuccess ]
 
 postLoginR :: (PrizmJSONAuthPlugin site) => AuthHandler site TypedContent
 postLoginR = do
