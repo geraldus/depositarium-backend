@@ -1,10 +1,12 @@
-{-# LANGUAGE FlexibleContexts  #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE GADTs                 #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE PartialTypeSignatures #-}
+{-# LANGUAGE RecordWildCards       #-}
 module Handler.Manage.User.Update where
 
-import           Import                  hiding ( delete, on, update, (=.),
-                                           (==.) )
+import           Import                  hiding ( delete, on, update, (!=.),
+                                           (=.), (==.) )
 
 import           Form.UserData
 import           Local.Persist.Access
