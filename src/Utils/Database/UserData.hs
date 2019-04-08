@@ -13,8 +13,17 @@ import           Database.Esqueleto
 
 type MaybeEntity a = Maybe (Entity a)
 
+type PartialMetas = (Entity User, MaybeEntity Email, MaybeEntity UserMeta)
+
 type UserMetas = (Entity User, MaybeEntity Email, MaybeEntity UserMeta, [Entity UserRights])
 
+newtype SafeUserMetasJSON = SafeUserMetas { cleanMetasJSON :: UserMetas -> A.Value }
+
+zipPartialMetas :: PartialMetas -> [Entity UserRights] -> UserMetas
+zipPartialMetas (u, e, m) = (,,,) u e m
+
+unCurryMetas :: (u -> e -> m -> rs -> x) -> (u, e, m, rs) -> x
+unCurryMetas f (u, e, m, rs) = f u e m rs
 
 
 getUserMetaData ::
