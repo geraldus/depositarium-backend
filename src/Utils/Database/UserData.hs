@@ -60,6 +60,23 @@ getUserMetaDataEither user = do
         withExistingUser [] _         = pure Nothing
         withExistingUser (m:_) action = Just <$> action m
 
+selectPartialMetas ::
+    ( MonadIO m
+    , BackendCompatible SqlBackend backend
+    , PersistQueryRead backend
+    , PersistUniqueRead backend)
+    => ( SqlExpr (Entity User)
+            -> SqlExpr (MaybeEntity Email)
+            -> SqlExpr (MaybeEntity UserMeta)
+            -> SqlExpr (Database.Esqueleto.Value Bool)
+            )
+    -> ReaderT backend m [PartialMetas]
+selectPartialMetas applyWhere = select . from $
+    \(u `LeftOuterJoin` e `LeftOuterJoin` m) -> do
+        on (just (u ^. UserId) ==. m ?. UserMetaUser)
+        on (just (u ^. UserId) ==. e ?. EmailUser)
+        where_ (applyWhere u e m)
+        return (u, e, m)
 
 
 cleanJSONUserData ::
