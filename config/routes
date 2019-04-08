@@ -11,6 +11,7 @@
 
 /api/user/read/#UserId APIUserMetaDataUnsafeR POST
 /api/user/info APIAuthInfoR POST
+/api/user/list APIUserListAllR POST
 
 /manage/users/ ManageListUserR GET
 /manage/users/create ManageCreateUserR GET POST

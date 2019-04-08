@@ -6,9 +6,13 @@ module Handler.API.User where
 import           Import
 
 import           Local.Persist.Access    ( AccessType (..) )
-import           Utils.Common            ( errorResponseJ, jsonMerge )
-import           Utils.Database.UserData ( cleanJSONUserData, getUserMetaData )
+import           Utils.App.Common        ( requireAccessJSON )
+import           Utils.Common            ( errorResponseJ, jsonMerge, sendJSON,
+                                           successResponseWithDataJ )
+import           Utils.Database.UserData ( cleanJSONUserData, getUserMetaData,
+                                           selectFilterUserMetas, unCurryMetas )
 
+import           Database.Esqueleto      ( val )
 import           Network.HTTP.Types      ( status200, unauthorized401 )
 
 
@@ -72,5 +76,10 @@ postAPIUserMetaDataUnsafeR user = do
 
         vals = map entityVal
 
-sendJSON :: Value -> HandlerFor App a
-sendJSON = sendStatusJSON status200
+postAPIUserListAllR :: Handler TypedContent
+postAPIUserListAllR = do
+    _ <- requireAccessJSON ListUsers
+    -- ^ shor circuit by access type
+    list <- runDB $ selectFilterUserMetas (\_ _ _ -> val True)
+    sendJSON $ successResponseWithDataJ $ object
+        [ "list" .= toJSON (map (unCurryMetas cleanJSONUserData) list) ]
