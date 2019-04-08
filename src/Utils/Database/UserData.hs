@@ -40,6 +40,20 @@ getUserMetaDataEither ::
     , PersistQueryRead backend
     , PersistUniqueRead backend)
     => Either (Key User) Text -> ReaderT backend m (Maybe UserMetas)
+getUserMetaDataEither user =
+    mayExists <$> selectFilterUserMetas ( whereCond user )
+    where
+        whereCond (Left k)  = \u _ _ -> byIdKeyCond k u
+        whereCond (Right t) = \u e _ -> byTextIdentCond t u e
+
+        byIdKeyCond idKey candidate =
+            candidate ^. UserId ==. val idKey
+
+        byTextIdentCond ident userC emailC =
+                userC ^. UserIdent ==. val ident
+            ||. emailC?. EmailEmail ==. just (val ident)
+
+        mayExists = headMay
 
 selectFilterUserMetas ::
     ( MonadIO m
@@ -59,9 +73,6 @@ selectFilterUserMetas applyPartialWhere = do
             where_ (a ^. UserRightsUser ==. val (entityKey u))
             return a
         return (u, e, m, access)
-    where
-        withExistingUser [] _         = pure Nothing
-        withExistingUser (m:_) action = Just <$> action m
 
 selectPartialMetas ::
     ( MonadIO m
