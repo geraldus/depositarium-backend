@@ -334,13 +334,12 @@ allAccessRights  :: [ AccessType ]
 allAccessRights = [ minBound .. maxBound ]
 
 allAccessRightsJ :: I.Value
-allAccessRightsJ = toJSON $ map
-        (\ar -> let x = txt ar in AccessRightJ x x x)
-        allAccessRights
+allAccessRightsJ =
+  toJSON $ map (\ar -> let x = txt ar in AccessRightJ x x x) allAccessRights
 
 -- * React
 
 addUiBundle :: Widget
-addUiBundle =  do
+addUiBundle = do
     addStylesheet (StaticR js_ui_umi_css)
     addScript (StaticR js_ui_umi_js)
