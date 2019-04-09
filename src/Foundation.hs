@@ -191,14 +191,14 @@ instance Yesod App where
 -- | Authorizes only users having ALL specified access rights
 authorizeByAccess :: [AccessType] -> Handler AuthResult
 authorizeByAccess ats = do
-    user <- maybeAuth
-    case user of
+  user <- maybeAuth
+  case user of
     Nothing               -> unauthorizedI MsgPleaseLogInText
-        Just (Entity ident _) -> do
-            accessRights <- map (userRightsAccess . entityVal) <$> getUserRights ident
-            if isSubsequenceOf (sort ats) (sort accessRights)
-                then pure Authorized
-                else unauthorizedI MsgAccessDenied
+    Just (Entity ident _) -> do
+      accessRights <- map (userRightsAccess . entityVal) <$> getUserRights ident
+      if isSubsequenceOf (sort ats) (sort accessRights)
+        then pure Authorized
+        else unauthorizedI MsgAccessDenied
   where getUserRights user = runDB $ selectList [UserRightsUser P.==. user] []
 
 
@@ -337,5 +337,5 @@ allAccessRightsJ =
 
 addUiBundle :: Widget
 addUiBundle = do
-    addStylesheet (StaticR js_ui_umi_css)
-    addScript (StaticR js_ui_umi_js)
+  addStylesheet (StaticR js_ui_umi_css)
+  addScript (StaticR js_ui_umi_js)
